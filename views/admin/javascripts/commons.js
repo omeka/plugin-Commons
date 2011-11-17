@@ -4,12 +4,13 @@ var Commons = {
 	addItem: function() {
 		var urlArray = window.location.href.split('/');
 		var itemId = urlArray[urlArray.length-1];
-		jQuery.post(window.webRoot + "/commons/items/add", {'itemId': itemId}, Commons.responseHandler);
+		jQuery.post(window.webRoot + "/commons/items/add", {'itemId': itemId}, Commons.addResponseHandler);
 	
 	},
 	
-	responseHandler: function(response) {
-		alert(response);
+	addResponseHandler: function(response) {
+		title = jQuery('#dublin-core-title div').html();
+		jQuery('#commons-item-add').replaceWith('<p> "' + title + '" is now part of the Omeka Commons!</p>');
 	}
 };
 

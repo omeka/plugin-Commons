@@ -12,9 +12,23 @@ if(class_exists('Omeka_Plugin_Abstract')) {
         
         public function hookAdminAppendToItemsShowSecondary()
         {
+            
+            $request = Zend_Controller_Front::getInstance()->getRequest();
+            $plugin = $request->getModuleName();
+            $action = $request->getActionName();
+            $params = $request->getParams();
+            $findParams = array('record_type'=>'Item', 'record_id'=>$params['id']);
+            $commonsRecords = get_db()->getTable('CommonsRecord')->findBy($findParams);
+            if(empty($commonsRecords)) {
+                $link = "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
+            } else {
+                $link = "<p id='commons-item-status'>Already part of the Omeka Commons</p>";
+            }
+            
             $html = "<div class='info-panel'>";
+            
             $html .= "<h2>Omeka Commons</h2>";
-            $html .= "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
+            $html .= $link;
             $html .= "</div>";
             echo $html;
         }

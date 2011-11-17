@@ -22,6 +22,7 @@ abstract class Commons_Exporter
             $this->exportData[$this->typeKey] = array();
         }
         $this->exportData[$this->typeKey][] = $this->recordData;
+        return $this->exportData;
     }
     
     abstract public function buildRecordData();
@@ -33,13 +34,23 @@ abstract class Commons_Exporter
         $client = new Omeka_Http_Client();
         $client->setUri(COMMONS_API_URL);
         $client->setParameterPost('data', $json);
-        $body = $client->request('POST');
-        return $body;
+        $response = $client->request('POST');
+        
+        return $response->getBody();
+    }
+    
+    public function processResponse($response)
+    {
+        
+        
+        
+        
     }
     
     protected function exportTemplate()
     {
         $key = get_option('commons_key');
+        $key = '123key';
         $template = array(
             'key' => $key,
             'installation_url' => WEB_ROOT,

@@ -7,10 +7,10 @@ class Commons_Exporter_Collection extends Commons_Exporter
     public function buildRecordData()
     {
         $collectionArray = array(
-            'orig_id' => $this->_record->id,
-            'title' => $this->_record->name,
-            'description' => $this->_record->description,
-            'url' => record_uri($this->_record, 'show')
+            'orig_id' => $this->record->id,
+            'title' => $this->record->name,
+            'description' => $this->record->description,
+            'url' => WEB_ROOT . '/collections/show/' . $this->record->id,
         );
         return $collectionArray;
     }
