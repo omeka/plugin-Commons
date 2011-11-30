@@ -25,6 +25,10 @@ abstract class Commons_Exporter
         return $this->exportData;
     }
     
+    public function setRecordData($key, $value) {
+        $this->recordData[$key] = $value;
+    }
+    
     abstract public function buildRecordData();
     
     public function sendToCommons()

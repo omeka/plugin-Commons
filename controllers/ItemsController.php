@@ -2,39 +2,26 @@
 
 class Commons_ItemsController extends Omeka_Controller_Action
 {
-    /**
-     *
-     * Browse, filter, and select individual items to send to the Commons
-     */
-    public function addAction()
+   
+    public function ajaxAction()
     {
         $this->_helper->viewRenderer->setNoRender();
         $item = get_item_by_id($_POST['itemId']);
-		
-		//if it's part of a collection, add the data about the collection to the export
-		if($item->Collection) {
-		    $collectionExporter = new Commons_Exporter_Collection($item->Collection);
-		    $collectionExporter->buildRecordData();
-		    $collectionExporter->addDataToExport();
-		    $exporter = new Commons_Exporter_Item($item, $collectionExporter->exportData);
-		} else {
-		    $exporter = new Commons_Exporter_Item($item);
-		}
-		$exporter->buildRecordData();
-		$exporter->addDataToExport();
-		$status = $exporter->sendToCommons();
-		$this->updateCommonsRecord($item, $status);
-		if($item->Collection) {
-		    $this->updateCommonsRecord($item->Collection, $status);
-		}
+        $itemRecord = $this->getCommonsRecord($item);
+        $status = $itemRecord->export();
 		echo $status;
     }
     
     public function updateCommonsRecord($record, $status)
     {
+        $statusArray = json_decode($status, true);
         $commonsRecord = $this->getCommonsRecord($record);
         $commonsRecord->status = $status;
         $commonsRecord->last_import = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+
+        if(isset($statusArray['item_id'])) {
+            $commonsRecord->commons_id = $statusArray['item_id'];
+        }
         $commonsRecord->save();
     }
     
@@ -53,6 +40,7 @@ class Commons_ItemsController extends Omeka_Controller_Action
         }
         
     }
+
     
     
 }
