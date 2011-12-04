@@ -18,7 +18,7 @@ class CommonsRecord extends Omeka_Record
         $statusArray = json_decode($status, true);
         $this->status = serialize($statusArray);
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
-
+_log($status);
         if(isset($statusArray['id'])) {
             $this->commons_id = $statusArray['id'];
         }
@@ -49,6 +49,7 @@ class CommonsRecord extends Omeka_Record
 		}
 		$exporter->setRecordData('license', $this->license);
 		$exporter->addDataToExport();
+		_log(print_r($exporter->exportData, true));
 		$status = $exporter->sendToCommons();
 		release_object($item);
 		return $status;
@@ -63,17 +64,17 @@ class CommonsRecord extends Omeka_Record
 	    return $exporter->sendToCommons();
     }
     
-    private function processItemsForCollection($export = true) {
+    public function processItemsForCollection($export = true) {
         if($this->record_type != 'Collection') {
             throw new Exception('processItemsForCollection cannot be called on non-Collection CommonsRecords');
         }
         
         $db = $this->_db;
         
-        $items = get_items(array('collection'=>$this->record_id));
+        $items = get_items(array('collection'=>$this->record_id), null);
         foreach($items as $item) {
             //see if item has a CommonsRecord
-            $itemRecord = $db->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
+            $itemRecord = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
             if($itemRecord) {
                 //if an item has already been separately added to commons, this will override the license!!
                 if($itemRecord->license != $this->license ) {
@@ -83,10 +84,13 @@ class CommonsRecord extends Omeka_Record
                 $itemRecord = new CommonsRecord();
                 $itemRecord->initFromRecord($item);
             }
+            $itemRecord->license = $this->license;
             $itemRecord->save();
+            release_object($item);
+            if($export) {
+                $itemRecord->export();
+            }
         }
-        if($export) {
-            $itemRecord->export();
-        }
+
     }
 }

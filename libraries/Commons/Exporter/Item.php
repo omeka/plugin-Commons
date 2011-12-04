@@ -11,7 +11,7 @@ class Commons_Exporter_Item extends Commons_Exporter
             'orig_id' => $this->record->id,
             'url' => WEB_ROOT . '/items/show/' . $this->record->id,
             'collection' => $this->record->collection_id,
-            'exhibits' => $this->exhibitIds(),
+            'exhibitPages' => $this->exhibitPages(),
             'itemTypeName' => $this->itemTypeName(),
             'elementTexts' => $this->elementTexts(),
             'files' => $this->files(),
@@ -21,19 +21,22 @@ class Commons_Exporter_Item extends Commons_Exporter
         
     }
  
-    private function exhibitIds()
+    private function exhibitPages()
     {
      //   $exhibitPageEntryTable = get_db()->getTable('ExhibitPageEntry');
         $db = get_db();
         $itemId = $this->record->id;
-        $select = "	SELECT DISTINCT e.id FROM $db->Exhibit e
-        			INNER JOIN $db->ExhibitSection s ON s.exhibit_id = e.id
-        			INNER JOIN $db->ExhibitPage sp ON sp.section_id = s.id
-        			INNER JOIN $db->ExhibitPageEntry ip ON ip.page_id = sp.id
-        			WHERE ip.item_id = $itemId ";
-
-        $exhibits = $db->fetchCol($select);
-        return $exhibits;
+        $select = "	SELECT DISTINCT sp.* FROM $db->ExhibitPage sp
+        			INNER JOIN $db->ExhibitPageEntry epe ON epe.page_id = sp.id
+        			WHERE epe.item_id = $itemId ";
+        $exhibitPages = $db->getTable('ExhibitPage')->fetchObjects($select);
+        $exhibitPageIds = array();
+        foreach ($exhibitPages as $record) {
+            $exporter = new Commons_Exporter_ExhibitPage($record);
+            $this->addDataToExport($exporter->recordData, 'exhibits');
+            $exhibitPageIds[] = $record->id;
+        }
+        return $exhibitPageIds;
     }
     
     private function elementTexts()

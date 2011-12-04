@@ -16,12 +16,16 @@ abstract class Commons_Exporter
         $this->recordData = $this->buildRecordData();
     }
     
-    public function addDataToExport()
+    public function addDataToExport($recordData = null, $typeKey = null)
     {
-        if(!isset($this->exportData[$this->typeKey])) {
-            $this->exportData[$this->typeKey] = array();
+        $data = $recordData ? $recordData : $this->recordData;
+        $typeKey = $typeKey ? $typeKey : $this->typeKey;
+_log($typeKey);
+        if(!isset($this->exportData[$typeKey])) {
+            $this->exportData[$typeKey] = array();
         }
-        $this->exportData[$this->typeKey][] = $this->recordData;
+_log(print_r($data, true));
+        $this->exportData[$typeKey][] = $data;
         return $this->exportData;
     }
     
@@ -51,6 +55,8 @@ abstract class Commons_Exporter
         
     }
     
+    
+    
     protected function exportTemplate()
     {
         $key = get_option('commons_key');
@@ -61,4 +67,18 @@ abstract class Commons_Exporter
         );
         return $template;
     }
+    
+    public function buildRealUrl($omeka_uri) {
+        $exploded = explode('/', WEB_ROOT);
+        unset($exploded[count($exploded) -1]);
+        $url = '';
+        foreach($exploded as $part) {
+            $url .= $part;
+        }
+        $url.= $omeka_uri;
+        return html_escape($url);
+    }
+            
+    
+    
 }

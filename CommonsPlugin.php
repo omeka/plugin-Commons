@@ -84,7 +84,6 @@ if(class_exists('Omeka_Plugin_Abstract')) {
         public function filterAdminItemsFormTabs($tabs, $item)
         {
             $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            
             $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
             return $tabs;
         }
