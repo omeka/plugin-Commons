@@ -20,11 +20,10 @@ abstract class Commons_Exporter
     {
         $data = $recordData ? $recordData : $this->recordData;
         $typeKey = $typeKey ? $typeKey : $this->typeKey;
-_log($typeKey);
+
         if(!isset($this->exportData[$typeKey])) {
             $this->exportData[$typeKey] = array();
         }
-_log(print_r($data, true));
         $this->exportData[$typeKey][] = $data;
         return $this->exportData;
     }
@@ -37,7 +36,6 @@ _log(print_r($data, true));
     
     public function sendToCommons()
     {
-        //build something fancy-schmancy with Zend_Http?
         $json = json_encode($this->exportData);
         $client = new Omeka_Http_Client();
         $client->setUri(COMMONS_API_URL);
@@ -46,21 +44,10 @@ _log(print_r($data, true));
         
         return $response->getBody();
     }
-    
-    public function processResponse($response)
-    {
         
-        
-        
-        
-    }
-    
-    
-    
     protected function exportTemplate()
     {
         $key = get_option('commons_key');
-        $key = '123key';
         $template = array(
             'key' => $key,
             'installation_url' => WEB_ROOT,

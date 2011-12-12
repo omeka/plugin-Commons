@@ -1,6 +1,6 @@
 <?php
 
-function cc_license_link($license)
+function cc_license_link($license, $display = array('button'))
 {
     $licenseData = array(
         'cc-0' => array(
@@ -49,8 +49,15 @@ function cc_license_link($license)
     );
     
     $html = "<a href='" . $licenseData[$license]['link'] . "'>";
-    $html .= "<img class='commons-cc' src='" . $licenseData[$license]['button'] . "'/>";
-    $html .= $licenseData[$license]['short_label'];
+    if(in_array('button', $display)) {
+        $html .= "<img class='commons-cc' src='" . $licenseData[$license]['button'] . "'/>";
+    }
+    if(in_array('short_label', $display )) {
+        $html .= $licenseData[$license]['short_label'];
+    }
+    if(in_array('long_label', $display )) {
+        $html .= $licenseData[$license]['long_label'];
+    }
     $html .= "</a>";
     return $html;
     

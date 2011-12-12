@@ -25,7 +25,7 @@ class Commons_ItemsController extends Omeka_Controller_Action
         $commonsRecord->save();
     }
     
-    public function getCommonsRecord($record)
+    private function getCommonsRecord($record)
     {
         $params = array('record_id' => $record->id, 'record_type' => get_class($record) );
         $commonsRecords = $this->getDb()->getTable('CommonsRecord')->findBy($params);

@@ -10,15 +10,41 @@ class CommonsRecord extends Omeka_Record
     public $last_export;
     public $status;
 
-    public function export()
+    protected $_related = array(
+        'Record' => 'getRecord'
+    );
+    
+    public function getRecord()
+    {
+        return $this->getTable($this->record_type)->find($this->record_id);
+    }
+    
+    public function recordLabel()
+    {
+        //DC:Title if item, name if collection
+        switch($this->record_type) {
+            case 'Item':
+                $title = item('Dublin Core', 'Title', array(), $this->Record);
+                if($title) {
+                    return $title;
+                }
+            break;
+                
+            case 'Collection':
+                return $this->Record->name;
+                
+            break;
+        }
+    }
+    
+    public function export($options)
     {
         $recordToExport = $this->getTable()->findOmekaRecord($this->record_type, $this->record_id);
         $method = "export" . $this->record_type;
-        $status = $this->$method($recordToExport);
+        $status = $this->$method($recordToExport, $options);
         $statusArray = json_decode($status, true);
         $this->status = serialize($statusArray);
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
-_log($status);
         if(isset($statusArray['id'])) {
             $this->commons_id = $statusArray['id'];
         }
@@ -32,7 +58,7 @@ _log($status);
         $this->record_type = get_class($record);
     }
     
-    private function exportItem($item)
+    private function exportItem($item, $options = null)
     {
         if(!$item->public) {
             $this->delete();
@@ -49,48 +75,22 @@ _log($status);
 		}
 		$exporter->setRecordData('license', $this->license);
 		$exporter->addDataToExport();
-		_log(print_r($exporter->exportData, true));
+
 		$status = $exporter->sendToCommons();
 		release_object($item);
 		return $status;
     }
     
-    private function exportCollection($collection)
+    private function exportCollection($collection, $withItems = false)
     {
         $exporter = new Commons_Exporter_Collection($collection);
 	    $exporter->setRecordData('license', $this->license);
 	    $exporter->addDataToExport();
+	    if($withItems) {
+	        $exporter->addItemsToExport();
+	    }
 	    release_object($collection);
 	    return $exporter->sendToCommons();
     }
-    
-    public function processItemsForCollection($export = true) {
-        if($this->record_type != 'Collection') {
-            throw new Exception('processItemsForCollection cannot be called on non-Collection CommonsRecords');
-        }
-        
-        $db = $this->_db;
-        
-        $items = get_items(array('collection'=>$this->record_id), null);
-        foreach($items as $item) {
-            //see if item has a CommonsRecord
-            $itemRecord = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            if($itemRecord) {
-                //if an item has already been separately added to commons, this will override the license!!
-                if($itemRecord->license != $this->license ) {
-                    $itemRecord->license = $this->license;
-                }
-            } else {
-                $itemRecord = new CommonsRecord();
-                $itemRecord->initFromRecord($item);
-            }
-            $itemRecord->license = $this->license;
-            $itemRecord->save();
-            release_object($item);
-            if($export) {
-                $itemRecord->export();
-            }
-        }
 
-    }
 }
