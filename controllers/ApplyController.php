@@ -23,7 +23,7 @@ class Commons_ApplyController extends Omeka_Controller_Action
             'url' => rtrim(trim("http://example.com/ "), '/')
         );
         $json = json_encode($data);
-        $client = new Omeka_Http_Client();
+        $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_APPLY_URL);
         $client->setParameterPost('data', $json);
         $response = $client->request('POST');

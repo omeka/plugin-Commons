@@ -11,12 +11,14 @@ class Commons_Exporter_Item extends Commons_Exporter
             'orig_id' => $this->record->id,
             'url' => WEB_ROOT . '/items/show/' . $this->record->id,
             'collection' => $this->record->collection_id,
-            'exhibitPages' => $this->exhibitPages(),
             'itemTypeName' => $this->itemTypeName(),
             'elementTexts' => $this->elementTexts(),
             'files' => $this->files(),
             'tags' => $this->tags(),
         );
+        if(plugin_is_active('ExhibitBuilder')) {
+            $itemArray['exhibitPages'] = $this->exhibitPages();
+        }
         return $itemArray;
         
     }

@@ -37,7 +37,7 @@ abstract class Commons_Exporter
     public function sendToCommons()
     {
         $json = json_encode($this->exportData);
-        $client = new Omeka_Http_Client();
+        $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
         $client->setParameterPost('data', $json);
         $response = $client->request('POST');
