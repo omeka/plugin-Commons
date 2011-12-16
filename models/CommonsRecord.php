@@ -6,7 +6,6 @@ class CommonsRecord extends Omeka_Record
     public $commons_id;
     public $record_id;
     public $record_type;
-    public $license;
     public $last_export;
     public $status;
 
@@ -73,7 +72,6 @@ class CommonsRecord extends Omeka_Record
 		} else {
 		    $exporter = new Commons_Exporter_Item($item);
 		}
-		$exporter->setRecordData('license', $this->license);
 		$exporter->addDataToExport();
 
 		$status = $exporter->sendToCommons();
@@ -84,7 +82,6 @@ class CommonsRecord extends Omeka_Record
     private function exportCollection($collection, $withItems = false)
     {
         $exporter = new Commons_Exporter_Collection($collection);
-	    $exporter->setRecordData('license', $this->license);
 	    $exporter->addDataToExport();
 	    if($withItems) {
 	        $exporter->addItemsToExport();

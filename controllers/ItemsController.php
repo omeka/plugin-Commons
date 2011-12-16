@@ -2,15 +2,6 @@
 
 class Commons_ItemsController extends Omeka_Controller_Action
 {
-   
-    public function ajaxAction()
-    {
-        $this->_helper->viewRenderer->setNoRender();
-        $item = get_item_by_id($_POST['itemId']);
-        $itemRecord = $this->getCommonsRecord($item);
-        $status = $itemRecord->export();
-		echo $status;
-    }
     
     public function updateCommonsRecord($record, $status)
     {

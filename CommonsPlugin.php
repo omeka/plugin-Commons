@@ -52,7 +52,6 @@ if(class_exists('Omeka_Plugin_Abstract')) {
             $html = "<div class='info-panel'>";
             $html .= "<h2>Omeka Commons</h2>";
             $html .= $link;
-            $html .= cc_license_link($license);
             $html .= "</div>";
             echo $html;
         }
@@ -197,56 +196,6 @@ if(class_exists('Omeka_Plugin_Abstract')) {
                 $html .= " checked='checked' />";
             } else {
                 $html .= " />";
-            }
-    
-            switch($record_type) {
-                case 'Item':
-                    $html .= "<p>Assign a license for this item</p>";
-                    break;
-                    
-                case 'Collection':
-                    $html .= "<p>Assign a license for items in this collection. You can override this license on individual items in the collection.</p>";
-                    break;
-            }
-            
-            if($record && $record->license == 'cc-0') {
-                $html .= "<input type='radio' name='commons_license' value='cc-0' checked='checked'/>" . cc_license_link('cc-0') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='cc-0'/>" . cc_license_link('cc-0') . "<br/>";
-            }
-            if($record && $record->license == 'by') {
-                $html .= "<input type='radio' name='commons_license' value='by' checked='checked'/>" . cc_license_link('by') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by'/>" . cc_license_link('by') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-nc') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc' checked='checked'/>" . cc_license_link('by-nc') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc'/>" . cc_license_link('by-nc') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-nd') {
-                $html .= "<input type='radio' name='commons_license' value='by-nd' checked='checked'/>" . cc_license_link('by-nd') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nd'/>" . cc_license_link('by-nd') . "<br/>";
-            }
-            if($record && $record->license == 'by-nc-sa') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-sa' checked='checked'/>" . cc_license_link('by-nc-sa') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-sa'/>" . cc_license_link('by-nc-sa') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-sa') {
-                $html .= "<input type='radio' name='commons_license' value='by-sa' checked='checked'/>" . cc_license_link('by-sa') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-sa'/>" . cc_license_link('by-sa') . "<br/>";
-            }
-        
-            if($record && $record->license == 'by-nc-nd') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-nd' checked='checked'/>" . cc_license_link('by-nc-nd') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-nd'/>" . cc_license_link('by-nc-nd') . "<br/>";
             }
     
             $html .= "</fieldset>";
@@ -504,7 +453,6 @@ if(class_exists('Omeka_Plugin_Abstract')) {
                   `commons_id` int(10) unsigned DEFAULT NULL,
                   `record_id` int(10) unsigned NOT NULL,
                   `record_type` tinytext NOT NULL,
-                  `license` enum('cc-0','by','by-nc','by-nd','by-nc-nd','by-nc-sa','by-sa') DEFAULT NULL,
                   `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                   `status` tinytext COLLATE utf8_unicode_ci,
                   PRIMARY KEY (`id`),
@@ -541,56 +489,6 @@ if(class_exists('Omeka_Plugin_Abstract')) {
                 $html .= " checked='checked' />";
             } else {
                 $html .= " />";
-            }
-    
-            switch($record_type) {
-                case 'Item':
-                    $html .= "<p>Assign a license for this item</p>";
-                    break;
-                    
-                case 'Collection':
-                    $html .= "<p>Assign a license for items in this collection. You can override this license on individual items in the collection.</p>";
-                    break;
-            }
-            
-            if($record && $record->license == 'cc-0') {
-                $html .= "<input type='radio' name='commons_license' value='cc-0' checked='checked'/>" . cc_license_link('cc-0') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='cc-0'/>" . cc_license_link('cc-0') . "<br/>";
-            }
-            if($record && $record->license == 'by') {
-                $html .= "<input type='radio' name='commons_license' value='by' checked='checked'/>" . cc_license_link('by') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by'/>" . cc_license_link('by') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-nc') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc' checked='checked'/>" . cc_license_link('by-nc') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc'/>" . cc_license_link('by-nc') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-nd') {
-                $html .= "<input type='radio' name='commons_license' value='by-nd' checked='checked'/>" . cc_license_link('by-nd') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nd'/>" . cc_license_link('by-nd') . "<br/>";
-            }
-            if($record && $record->license == 'by-nc-sa') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-sa' checked='checked'/>" . cc_license_link('by-nc-sa') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-sa'/>" . cc_license_link('by-nc-sa') . "<br/>";
-            }
-    
-            if($record && $record->license == 'by-sa') {
-                $html .= "<input type='radio' name='commons_license' value='by-sa' checked='checked'/>" . cc_license_link('by-sa') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-sa'/>" . cc_license_link('by-sa') . "<br/>";
-            }
-        
-            if($record && $record->license == 'by-nc-nd') {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-nd' checked='checked'/>" . cc_license_link('by-nc-nd') . "<br/>";
-            } else {
-                $html .= "<input type='radio' name='commons_license' value='by-nc-nd'/>" . cc_license_link('by-nc-nd') . "<br/>";
             }
     
             $html .= "</fieldset>";
