@@ -3,7 +3,7 @@
 class Commons_Exporter_Collection extends Commons_Exporter
 {
     protected $typeKey = 'collections';
-    
+
     public function buildRecordData()
     {
         $collectionArray = array(
@@ -14,7 +14,7 @@ class Commons_Exporter_Collection extends Commons_Exporter
         );
         return $collectionArray;
     }
-    
+
     public function addItemsToExport()
     {
         $db = get_db();
@@ -23,6 +23,8 @@ class Commons_Exporter_Collection extends Commons_Exporter
             //see if item has a CommonsRecord
             $itemRecord = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
             if($itemRecord) {
+
+
             } else {
                 $itemRecord = new CommonsRecord();
                 $itemRecord->initFromRecord($item);
@@ -32,9 +34,9 @@ class Commons_Exporter_Collection extends Commons_Exporter
             $this->addDataToExport($itemExporter->recordData, 'items');
             release_object($item);
         }
-        
+
     }
-    
-    
+
+
 
 }

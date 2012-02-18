@@ -1,498 +1,308 @@
 <?php
 
+class CommonsPlugin extends Omeka_Plugin_Abstract
+{
+    protected $_hooks = array(
+        'admin_append_to_items_show_secondary',
+        'admin_theme_header',
+        'admin_append_to_collections_form',
+        'after_save_form_collection',
+        'before_save_form_item',
+        'config',
+        'config_form',
+        'install',
+        'uninstall'
+        );
 
-if(class_exists('Omeka_Plugin_Abstract')) {
-    
-    class CommonsPlugin extends Omeka_Plugin_Abstract
+    protected $_filters = array(
+        'admin_items_form_tabs',
+        'admin_navigation_main'
+        );
+
+    protected $_options = array();
+
+    public function hookAdminAppendToItemsShowSecondary($item)
     {
-        protected $_hooks = array(
-            'admin_append_to_items_show_secondary',
-            'admin_theme_header',
-            'admin_append_to_collections_form',
-            'after_save_form_collection',
-            'after_save_form_item',
-            'config',
-            'config_form',
-            'install',
-            'uninstall'
-        );
-        
-        protected $_filters = array(
-            'admin_items_form_tabs',
-            'admin_navigation_main'
-        );
-        
-        protected $_options = array();
-        
-        public function hookAdminAppendToItemsShowSecondary($item)
-        {
-            if(!get_option('commons_key')) {
-                return;
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $db = get_db();
+        $commonsRecordTable = $db->getTable('CommonsRecord');
+
+        $commonsCollection = $commonsRecordTable->itemPartOfCommonsCollection($item);
+        if($commonsCollection) {
+            $collection = $db->getTable('Collection')->find($commonsCollection->record_id);
+            $link = "<p id='commons-item-collection'>This item is part of the Omeka Commons via collection {$collection->name}</p>";
+            $license = $commonsCollection->license;
+        } else {
+            $findParams = array('record_type'=>'Item', 'record_id'=>$item->id);
+            $commonsRecords = $commonsRecordTable->findBy($findParams);
+            if(empty($commonsRecords)) {
+                $link = "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
+            } else {
+                $commonsRecord = $commonsRecords[0];
+                $link = "<p id='commons-item-status'>Already part of the Omeka Commons</p>";
+                $license = $commonsRecord->license;
             }
+        }
+
+        $html = "<div class='info-panel'>";
+        $html .= "<h2>Omeka Commons</h2>";
+        $html .= $link;
+        $html .= "</div>";
+        echo $html;
+    }
+
+    public function hookAdminThemeHeader()
+    {
+        queue_js('commons');
+        queue_css('commons');
+    }
+
+    public function hookAdminAppendToCollectionsForm($collection)
+    {
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
+        echo $this->commonsForm($record, 'Collection');
+    }
+
+    public function hookAfterSaveFormCollection($collection)
+    {
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
+        if($collection->public && isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
+
+            if(!$record) {
+                $record = new CommonsRecord();
+                $record->record_id = $collection->id;
+                $record->record_type = 'Collection';
+            }
+            $record->save();
+            //true on a collection record sends along the item data, too.
+            $record->export(true);
+        } else {
+            if($record) {
+                $record->delete();
+            }
+        }
+    }
+
+    public function filterAdminNavigationMain($tabs)
+    {
+        $tabs['Omeka Commons'] = uri('commons');
+        return $tabs;
+    }
+
+    public function filterAdminItemsFormTabs($tabs, $item)
+    {
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
+        return $tabs;
+    }
+
+    public function hookBeforeSaveFormItem($item, $post)
+    {
+        $db = get_db();
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
             $db = get_db();
-            $commonsRecordTable = $db->getTable('CommonsRecord');
-    
-            $commonsCollection = $commonsRecordTable->itemPartOfCommonsCollection($item);
-            if($commonsCollection) {
-                $collection = $db->getTable('Collection')->find($commonsCollection->record_id);
-                $link = "<p id='commons-item-collection'>This item is part of the Omeka Commons via collection {$collection->name}</p>";
-                $license = $commonsCollection->license;
-            } else {
-                $findParams = array('record_type'=>'Item', 'record_id'=>$item->id);
-                $commonsRecords = $commonsRecordTable->findBy($findParams);
-                if(empty($commonsRecords)) {
-                    $link = "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
-                } else {
-                    $commonsRecord = $commonsRecords[0];
-                    $link = "<p id='commons-item-status'>Already part of the Omeka Commons</p>";
-                    $license = $commonsRecord->license;
-                }
-            }
-    
-            $html = "<div class='info-panel'>";
-            $html .= "<h2>Omeka Commons</h2>";
-            $html .= $link;
-            $html .= "</div>";
-            echo $html;
-        }
-        
-        public function hookAdminThemeHeader()
-        {
-            queue_js('commons');
-            queue_css('commons');
-        }
-        
-        public function hookAdminAppendToCollectionsForm($collection)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-            echo $this->commonsForm($record, 'Collection');
-        }
-        
-        public function hookAfterSaveFormCollection($collection)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-            if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
-                if(!$record) {
-                    $record = new CommonsRecord();
-                    $record->record_id = $collection->id;
-                    $record->record_type = 'Collection';
-                }
-                $record->license = $_POST['commons_license'];
-                $record->save();
-                //true on a collection record sends along the item data, too.
-                $record->export(true);
-            } else {
-                if($record) {
-                    $record->delete();
-                }
-            }
-        }
-    
-        public function filterAdminNavigationMain($tabs)
-        {
-            $tabs['Omeka Commons'] = uri('commons');
-            return $tabs;
-        }
-        
-        public function filterAdminItemsFormTabs($tabs, $item)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
-            return $tabs;
-        }
-        
-        public function hookAfterSaveFormItem($item, $post)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+
             if(!$item->public) {
                 if($record) {
                     $record->delete();
                 }
                 throw new Omeka_Validator_Exception("Only public Items can be part of the Omeka Commons");
             }
-    
-            if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
-                if(!$record) {
-                    $record = new CommonsRecord();
-                    $record->record_id = $item->id;
-                    $record->record_type = 'Item';
-                }
-                $record->license = $_POST['commons_license'];
-                $record->save();
-                $record->export();
-            } else {
-                if($record) {
-                    $record->delete();
-                }
+            if(!$record) {
+                $record = new CommonsRecord();
+                $record->record_id = $item->id;
+                $record->record_type = 'Item';
             }
-        }
-        
-        public function hookConfig()
-        {
-            $this->setOptions($_POST);
-        }
-        
-        public function hookConfigForm()
-        {
-            
-            include 'config_form.php';
-        }
-        
-        public function hookInstall()
-        {
-            $db = get_db();
-            $sql = "
-                CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
-                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                  `commons_id` int(10) unsigned DEFAULT NULL,
-                  `record_id` int(10) unsigned NOT NULL,
-                  `record_type` tinytext NOT NULL,
-                  `license` enum('cc-0','by','by-nc','by-nd','by-nc-nd','by-nc-sa','by-sa') DEFAULT NULL,
-                  `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                  `status` tinytext COLLATE utf8_unicode_ci,
-                  PRIMARY KEY (`id`),
-                  KEY `record_id` (`record_id`),
-                  KEY `license` (`license`)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
-            ";
-            
-            $db->exec($sql);
-    
-        }
-        
-        public function hookUninstall()
-        {
-            
-            
-            
-        }
-        
-        private function setOptions($post)
-        {
-            unset($post['install_plugin']);
-            foreach($post as $name=>$value) {
-                set_option($name, $value);
-            }
-        }
-        
-        private function commonsForm($record, $record_type)
-        {
-            $html = "<fieldset>";
-            $html .= "<label for='in_commons'>Make part of Omeka Commons?</label><input type='checkbox' name='in_commons'";
-    
+            $record->save();
+            $record->export();
+        } else {
             if($record) {
-                $html .= " checked='checked' />";
-            } else {
-                $html .= " />";
+                $record->delete();
             }
-    
-            $html .= "</fieldset>";
-            return $html;
         }
     }
-        
-} else {
-    
-    class CommonsPlugin
-    {
-        protected $_hooks = array(
-            'admin_append_to_items_show_secondary',
-            'admin_theme_header',
-            'admin_append_to_collections_form',
-            'after_save_form_collection',
-            'after_save_form_item',
-            'config',
-            'config_form',
-            'install',
-            'uninstall'
-        );
-        
-        protected $_filters = array(
-            'admin_items_form_tabs',
-            'admin_navigation_main'
-        );
 
-        public function __construct()
+    public function hookConfig()
     {
-        $this->_db = Omeka_Context::getInstance()->getDb();
+        $this->setOptions($_POST);
     }
-    
-    /**
-     * Set up the plugin to hook into Omeka.
-     *
-     * Adds the plugin's hooks and filters. Plugin writers must call this method
-     * after instantiating their plugin class.
-     */
-    public function setUp()
+
+    public function hookConfigForm()
     {
-        $this->_addHooks();
-        $this->_addFilters();
+        include 'config_form.php';
     }
-    
-    /**
-     * Set options with default values.
-     *
-     * Plugin authors may want to use this convenience method in their install
-     * hook callback.
-     */
-    protected function _installOptions()
+
+    public function hookInstall()
     {
-        $options = $this->_options;
-        if (!is_array($options)) {
-            return;
-        }
-        foreach ($options as $name => $value) {
-            // Don't set options without default values.
-            if (!is_string($name)) {
-                continue;
-            }
+        $db = get_db();
+        $sql = "
+            CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
+              `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+              `commons_id` int(10) unsigned DEFAULT NULL,
+              `record_id` int(10) unsigned NOT NULL,
+              `record_type` tinytext NOT NULL,
+              `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+              `status` tinytext COLLATE utf8_unicode_ci,
+              PRIMARY KEY (`id`),
+              KEY `record_id` (`record_id`),
+              KEY `license` (`license`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
+        ";
+
+        $db->exec($sql);
+
+    }
+
+    public function hookUninstall()
+    {
+        $db = get_db();
+        $sql = "DROP TABLE `$db->CommonsRecord` ;";
+        $db->exec($sql);
+    }
+
+    private function setOptions($post)
+    {
+        unset($post['install_plugin']);
+        foreach($post as $name=>$value) {
             set_option($name, $value);
         }
     }
-    
-    /**
-     * Delete all options.
-     *
-     * Plugin authors may want to use this convenience method in their uninstall
-     * hook callback.
-     */
-    protected function _uninstallOptions()
+
+    private function commonsForm($record)
     {
-        $options = self::$_options;
-        if (!is_array($options)) {
-            return;
+        $html = "<fieldset>";
+        $html .= "<label for='in_commons'>Make part of Omeka Commons?</label><input type='checkbox' name='in_commons'";
+
+        if($record) {
+            $html .= " checked='checked' />";
+        } else {
+            $html .= " />";
         }
-        foreach ($options as $name => $value) {
-            delete_option($name);
+
+        $html .= "</fieldset>";
+/*
+        $licenses = array(
+            'cc-0',
+            'by',
+            'by-nd',
+            'by-nc-sa',
+            'by-sa',
+            'by-nc',
+            'by-nc-nd'
+            );
+
+        $html .= "<fieldset>";
+        $html .= "<br/><br/>";
+        $html .= "<label for='commons_license'>Assign a license</label></br>";
+        foreach($licenses as $license) {
+            $html .= "<br/>";
+            if($record && $record->license && ($record->license == $license)) {
+                $selected = "checked='checked'";
+            } else {
+                $selected = '';
+            }
+            $html .= "<input type='radio' name='commons_license' value='$license' $selected />";
+            $html .= "<span>";
+            $html .= $this->licenseText($license, array('no_link', 'long_label'));
+            $html .= "</span>";
+
         }
+
+        $html .= "</fieldset>";
+*/
+        return $html;
     }
-    
-    /**
-     * Validate and add hooks.
-     */
-    private function _addHooks()
+
+
+    private function licenseText($license, $display = null)
     {
-        $hookNames = $this->_hooks;
-        if (!is_array($hookNames)) {
-            return;
+        if(!$display) {
+            $display = unserialize(get_option('commons_license_display'));
+            $display = array('button');
         }
-        foreach ($hookNames as $hookName) {
-            $functionName = 'hook' . Inflector::camelize($hookName);
-            if (!is_callable(array($this, $functionName))) {
-                throw new Omeka_Plugin_Exception('Hook callback "' . $functionName . '" does not exist.');
-            }
-            add_plugin_hook($hookName, array($this, $functionName));
+
+        $licenseData = array(
+            'cc-0' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/cc-0.png',
+                'link'=>'http://creativecommons.org/licenses/cc-zero/3.0',
+                'short_label'=>'CC-0',
+                'long_label'=>'Public Domain Dedication'
+            ),
+
+            'by' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by.png',
+                'link'=>'http://creativecommons.org/licenses/by/3.0',
+                'short_label'=>'BY',
+                'long_label'=>'Attribution'
+            ),
+            'by-nd' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nd.png',
+                'link'=>'http://creativecommons.org/licenses/by-nd/3.0',
+                'short_label'=>'BY-ND',
+                'long_label'=>'Attribution-NoDerivs'
+            ),
+            'by-nc-sa' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc-sa.png',
+                'link'=>'http://creativecommons.org/licenses/by-nc-sa/3.0',
+                'short_label'=>'BY-NC-SA',
+                'long_label'=>'Attribution-NonCommercial-ShareAlike'
+            ),
+            'by-sa' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-sa.png',
+                'link'=>'http://creativecommons.org/licenses/by-sa/3.0',
+                'short_label'=>'BY-SA',
+                'long_label'=>'Attribution-ShareAlike'
+            ),
+            'by-nc' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc.png',
+                'link'=>'http://creativecommons.org/licenses/by-nc/3.0',
+                'short_label'=>'BY-NC',
+                'long_label'=>'Attribution-NonCommercial'
+            ),
+            'by-nc-nd' => array(
+                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc-nd.png',
+                'link'=>'http://creativecommons.org/licenses/by-nc-nd/3.0',
+                'short_label'=>'BY-NC-ND',
+                'long_label'=>'Attribution-NonCommercial-NoDerivs'
+            ),
+        );
+
+        if(in_array('no_link', $display)) {
+            $html = '';
+        } else {
+            $html = "<a href='" . $licenseData[$license]['link'] . "'>";
         }
-    }
-    
-    /**
-     * Validate and add filters.
-     */
-    private function _addFilters()
-    {
-        $filterNames = $this->_filters;
-        if (!is_array($filterNames)) {
-            return;
+
+        if(in_array('button', $display)) {
+            $html .= "<img class='installations-license-block' src='" . $licenseData[$license]['button'] . "'/>";
         }
-        foreach ($filterNames as $filterName) {
-            $functionName = 'filter' . Inflector::camelize($filterName);
-            if (!is_callable(array($this, $functionName))) {
-                throw new Omeka_Plugin_Exception('Filter callback "' . $functionName . '" does not exist.');
-            }
-            add_filter($filterName, array($this, $functionName));
+        if(in_array('short_label', $display )) {
+            $html .= $licenseData[$license]['short_label'];
         }
-    }
-        
-        
-        
-        public function hookAdminAppendToItemsShowSecondary($item)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $db = get_db();
-            $commonsRecordTable = $db->getTable('CommonsRecord');
-    
-            $commonsCollection = $commonsRecordTable->itemPartOfCommonsCollection($item);
-            if($commonsCollection) {
-                $collection = $db->getTable('Collection')->find($commonsCollection->record_id);
-                $link = "<p id='commons-item-collection'>This item is part of the Omeka Commons via collection {$collection->name}</p>";
-                $license = $commonsCollection->license;
-            } else {
-                $findParams = array('record_type'=>'Item', 'record_id'=>$item->id);
-                $commonsRecords = $commonsRecordTable->findBy($findParams);
-                if(empty($commonsRecords)) {
-                    $link = "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
-                } else {
-                    $commonsRecord = $commonsRecords[0];
-                    $link = "<p id='commons-item-status'>Already part of the Omeka Commons</p>";
-                    $license = $commonsRecord->license;
-                }
-            }
-    
-            $html = "<div class='info-panel'>";
-            $html .= "<h2>Omeka Commons</h2>";
-            $html .= $link;
-            $html .= cc_license_link($license);
-            $html .= "</div>";
-            echo $html;
+        if(in_array('long_label', $display )) {
+            $html .= $licenseData[$license]['long_label'];
         }
-        
-        public function hookAdminThemeHeader()
-        {
-            queue_js('commons');
-            queue_css('commons');
+        if(!in_array('no_link', $display)) {
+            $html .= "</a>";
         }
-        
-        public function hookAdminAppendToCollectionsForm($collection)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-            echo $this->commonsForm($record, 'Collection');
-        }
-        
-        public function hookAfterSaveFormCollection($collection)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-            if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
-                if(!$record) {
-                    $record = new CommonsRecord();
-                    $record->record_id = $collection->id;
-                    $record->record_type = 'Collection';
-                }
-                $record->license = $_POST['commons_license'];
-                $record->save();
-                //true on a collection record sends along the item data, too.
-                $record->export(true);
-            } else {
-                if($record) {
-                    $record->delete();
-                }
-            }
-        }
-    
-        public function filterAdminNavigationMain($tabs)
-        {
-            $tabs['Omeka Commons'] = uri('commons');
-            return $tabs;
-        }
-        
-        public function filterAdminItemsFormTabs($tabs, $item)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
-            return $tabs;
-        }
-        
-        public function hookAfterSaveFormItem($item, $post)
-        {
-            if(!get_option('commons_key')) {
-                return;
-            }
-            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            if(!$item->public) {
-                if($record) {
-                    $record->delete();
-                }
-                throw new Omeka_Validator_Exception("Only public Items can be part of the Omeka Commons");
-            }
-    
-            if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
-                if(!$record) {
-                    $record = new CommonsRecord();
-                    $record->record_id = $item->id;
-                    $record->record_type = 'Item';
-                }
-                $record->license = $_POST['commons_license'];
-                $record->save();
-                $record->export();
-            } else {
-                if($record) {
-                    $record->delete();
-                }
-            }
-        }
-        
-        public function hookConfig()
-        {
-            $this->setOptions($_POST);
-        }
-        
-        public function hookConfigForm()
-        {
-            
-            include 'config_form.php';
-        }
-        
-        public function hookInstall()
-        {
-            $db = get_db();
-            $sql = "
-                CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
-                  `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-                  `commons_id` int(10) unsigned DEFAULT NULL,
-                  `record_id` int(10) unsigned NOT NULL,
-                  `record_type` tinytext NOT NULL,
-                  `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-                  `status` tinytext COLLATE utf8_unicode_ci,
-                  PRIMARY KEY (`id`),
-                  KEY `record_id` (`record_id`),
-                  KEY `license` (`license`)
-                ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
-            ";
-            
-            $db->exec($sql);
-    
-        }
-        
-        public function hookUninstall()
-        {
-            
-            
-            
-        }
-        
-        private function setOptions($post)
-        {
-            unset($post['install_plugin']);
-            foreach($post as $name=>$value) {
-                set_option($name, $value);
-            }
-        }
-        
-        private function commonsForm($record, $record_type)
-        {
-            $html = "<fieldset>";
-            $html .= "<label for='in_commons'>Make part of Omeka Commons?</label><input type='checkbox' name='in_commons'";
-    
-            if($record) {
-                $html .= " checked='checked' />";
-            } else {
-                $html .= " />";
-            }
-    
-            $html .= "</fieldset>";
-            return $html;
-        }
+        return $html;
+
     }
 }
+
+
