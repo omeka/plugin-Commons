@@ -37,6 +37,7 @@ abstract class Commons_Exporter
     public function sendToCommons()
     {
         $json = json_encode($this->exportData);
+_log(print_r($this->exportData, true));
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
         $client->setParameterPost('data', $json);
@@ -47,9 +48,18 @@ abstract class Commons_Exporter
     protected function exportTemplate()
     {
         $key = get_option('commons_key');
+        $installation = array(
+                    'title' => get_option('site_title'),
+                    'admin_email' => get_option('administrator_email'),
+                    'description' => get_option('description'),
+                    'copyright_info' => get_option('copyright'),
+                    'author_info' => get_option('author'),
+                    'url' => WEB_ROOT
+                    );
         $template = array(
             'key' => $key,
             'installation_url' => WEB_ROOT,
+            'installation' => $installation
         );
         return $template;
     }
