@@ -51,6 +51,32 @@ class CommonsRecord extends Omeka_Record
         return $status;
     }
 
+    public function makePrivate($item)
+    {
+
+        $key = get_option('commons_key');
+        $site = array(
+                    'title' => get_option('site_title'),
+                    'admin_email' => get_option('administrator_email'),
+                    'description' => get_option('description'),
+                    'copyright_info' => get_option('copyright'),
+                    'author_info' => get_option('author'),
+                    'url' => WEB_ROOT
+                    );
+        $data = array(
+            'key' => $key,
+            'site_url' => WEB_ROOT,
+            'site' => $site
+        );
+        $data['deleteItem'] = $item->id;
+        $json = json_encode($data);
+        $client = new Zend_Http_Client();
+        $client->setUri(COMMONS_API_URL);
+        $client->setParameterPost('data', $json);
+        $response = $client->request('POST');
+        return $response->getBody();
+    }
+
     public function initFromRecord($record)
     {
         $this->record_id = $record->id;

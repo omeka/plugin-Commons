@@ -7,7 +7,8 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         'admin_theme_header',
         'admin_append_to_collections_form',
         'after_save_form_collection',
-        'before_save_form_item',
+        'after_save_form_item',
+        'before_delete_item',
         'config',
         'config_form',
         'install',
@@ -107,7 +108,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         return $tabs;
     }
 
-    public function hookBeforeSaveFormItem($item, $post)
+    public function hookAfterSaveFormItem($item, $post)
     {
         $db = get_db();
         if(!get_option('commons_key')) {
@@ -116,7 +117,6 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
             $db = get_db();
-
             if(!$item->public) {
                 if($record) {
                     $record->delete();
@@ -135,6 +135,19 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
                 $record->delete();
             }
         }
+    }
+
+    public function hookBeforeDeleteItem($item)
+    {
+        $db = get_db();
+        if(!get_option('commons_key')) {
+            return;
+        }
+        $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        if($record) {
+            $record->makePrivate($item);
+        }
+
     }
 
     public function hookConfig()
@@ -159,8 +172,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
               `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
               `status` tinytext COLLATE utf8_unicode_ci,
               PRIMARY KEY (`id`),
-              KEY `record_id` (`record_id`),
-              KEY `license` (`license`)
+              KEY `record_id` (`record_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
         ";
 
@@ -238,44 +250,44 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 
         $licenseData = array(
             'cc-0' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/cc-0.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/cc-0.png',
                 'link'=>'http://creativecommons.org/licenses/cc-zero/3.0',
                 'short_label'=>'CC-0',
                 'long_label'=>'Public Domain Dedication'
             ),
 
             'by' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by.png',
                 'link'=>'http://creativecommons.org/licenses/by/3.0',
                 'short_label'=>'BY',
                 'long_label'=>'Attribution'
             ),
             'by-nd' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nd.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nd.png',
                 'link'=>'http://creativecommons.org/licenses/by-nd/3.0',
                 'short_label'=>'BY-ND',
                 'long_label'=>'Attribution-NoDerivs'
             ),
             'by-nc-sa' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc-sa.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc-sa.png',
                 'link'=>'http://creativecommons.org/licenses/by-nc-sa/3.0',
                 'short_label'=>'BY-NC-SA',
                 'long_label'=>'Attribution-NonCommercial-ShareAlike'
             ),
             'by-sa' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-sa.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-sa.png',
                 'link'=>'http://creativecommons.org/licenses/by-sa/3.0',
                 'short_label'=>'BY-SA',
                 'long_label'=>'Attribution-ShareAlike'
             ),
             'by-nc' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc.png',
                 'link'=>'http://creativecommons.org/licenses/by-nc/3.0',
                 'short_label'=>'BY-NC',
                 'long_label'=>'Attribution-NonCommercial'
             ),
             'by-nc-nd' => array(
-                'button'=> WEB_ROOT . '/plugins/Installations/views/shared/images/by-nc-nd.png',
+                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc-nd.png',
                 'link'=>'http://creativecommons.org/licenses/by-nc-nd/3.0',
                 'short_label'=>'BY-NC-ND',
                 'long_label'=>'Attribution-NonCommercial-NoDerivs'
@@ -289,7 +301,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
 
         if(in_array('button', $display)) {
-            $html .= "<img class='installations-license-block' src='" . $licenseData[$license]['button'] . "'/>";
+            $html .= "<img class='sites-license-block' src='" . $licenseData[$license]['button'] . "'/>";
         }
         if(in_array('short_label', $display )) {
             $html .= $licenseData[$license]['short_label'];

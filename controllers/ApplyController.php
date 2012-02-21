@@ -3,12 +3,12 @@
 class Commons_ApplyController extends Omeka_Controller_Action
 {
     public $_modelClass = 'CommonsRecord';
-    
+
     public function applyAction()
     {
         $this->_helper->viewRenderer->setNoRender();
-        
-       $installation = array(
+
+       $site = array(
                     'title' => get_option('site_title'),
                     'admin_email' => get_option('administrator_email'),
                     'description' => get_option('description'),
@@ -17,7 +17,7 @@ class Commons_ApplyController extends Omeka_Controller_Action
                     'url' => WEB_ROOT
                     );
         $data = array();
-        $data['installation'] = $installation;
+        $data['site'] = $site;
         $data['institution'] = array(
             'name' => "Institution Name",
             'url' => rtrim(trim("http://example.com/ "), '/')
@@ -27,12 +27,12 @@ class Commons_ApplyController extends Omeka_Controller_Action
         $client->setUri(COMMONS_API_APPLY_URL);
         $client->setParameterPost('data', $json);
         $response = $client->request('POST');
-        
+
         $response = $response->getBody();
         echo $response;
-        
-        
-        
+
+
+
     }
-    
+
 }
