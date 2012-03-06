@@ -12,7 +12,7 @@ abstract class Commons_Exporter
     public function __construct($record, $exportData = null)
     {
         $this->record = $record;
-        $this->exportData = $exportData ? $exportData : $this->exportTemplate();
+        $this->exportData = $exportData ? $exportData : self::exportTemplate();
         $this->recordData = $this->buildRecordData();
     }
 
@@ -44,7 +44,7 @@ abstract class Commons_Exporter
         return $response->getBody();
     }
 
-    protected function exportTemplate()
+    static function exportTemplate()
     {
         $key = get_option('commons_key');
         $site = array(
@@ -53,7 +53,9 @@ abstract class Commons_Exporter
                     'description' => get_option('description'),
                     'copyright_info' => get_option('copyright'),
                     'author_info' => get_option('author'),
-                    'url' => WEB_ROOT
+                    'url' => WEB_ROOT,
+                    'logo_url' => get_option('commons_logo_url'),
+                    'commons_title_color' =>get_option('commons_title_color')
                     );
         $template = array(
             'key' => $key,

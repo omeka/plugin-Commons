@@ -94,7 +94,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 
     public function filterAdminNavigationMain($tabs)
     {
-        $tabs['Omeka Commons'] = uri('commons');
+        $tabs['Omeka Commons'] = uri('commons/index/config');
         return $tabs;
     }
 
@@ -176,7 +176,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
         ";
 
-        $db->exec($sql);
+        $db->query($sql);
 
     }
 
@@ -184,7 +184,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
     {
         $db = get_db();
         $sql = "DROP TABLE `$db->CommonsRecord` ;";
-        $db->exec($sql);
+        $db->query($sql);
     }
 
     private function setOptions($post)

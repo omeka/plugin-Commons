@@ -1,10 +1,10 @@
 <script type="text/javascript">
 
 apply = function() {
-	var url = "<?php echo WEB_ROOT . '/admin/commons/apply/apply'; ?>";
-	jQuery.get(url);
+    var url = "<?php echo WEB_ROOT . '/admin/commons/apply/apply'; ?>";
+    jQuery.get(url);
 
-	
+
 }
 
 </script>
@@ -27,3 +27,4 @@ apply = function() {
         <?php endif; ?>
     </div>
 </div>
+
