@@ -35,8 +35,6 @@ class Commons_IndexController extends Omeka_Controller_Action
                 $logo_url = WEB_ROOT . '/plugins/Commons/commons_logo/' . $_FILES['commons_logo']['name'];
                 set_option('commons_logo_url', $logo_url);
             }
-
-
             set_option('commons_title_color', $_POST['commons_title_color']);
 
             $data = Commons_Exporter::exportTemplate();

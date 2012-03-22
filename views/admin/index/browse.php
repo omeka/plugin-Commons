@@ -16,15 +16,23 @@ head($head);
 
 </ul>
 <div id='primary'>
-
+<table>
+<thead>
+<tr><th>Record</th><th>Type</th><th>Commons Page</th><th>Last Update to Commons</th><th>Status</th><th>Status Details</th></tr>
+<tbody>
 <?php while(loop_records('commons_records', $commons_records, 'commons_set_current_record')):  ?>
-<div>
+<tr>
 <?php $record = commons_get_current_record(); ?>
-<h2><?php echo $record->recordLabel(); ?></a></h2>
-<p>Status: <?php echo $record->status;  ?></p>
-</div>
+<td><?php echo $record->recordLabel(); ?></a></td>
+<td><?php echo $record->record_type; ?></td>
+<td><a href="<?php echo COMMONS_BASE_URL . '/items/show/' . $record->commons_item_id; ?>">Go to page</a></td>
+<td><?php echo $record->last_export;  ?></td>
+<td><?php echo $record->status;  ?></td>
+<td><?php echo $record->status_message;  ?></td>
+</tr>
 <?php endwhile; ?>
-
+</tbody>
+</table>
 
 
 </div>
