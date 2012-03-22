@@ -1,8 +1,18 @@
 <?php
-head();
+$head = array('title' => 'Omeka Commons Branding', 'content_class' => 'horizontal-nav');
+head($head);
 
 ?>
+<ul id="section-nav" class="navigation">
 
+    <li class="">
+        <a href="<?php echo uri('commons/index/config'); ?>">Commons branding options</a>
+    </li>
+    <li class="">
+        <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
+    </li>
+
+</ul>
 <div id='primary'>
 
 <form enctype="multipart/form-data" action="" method="post">

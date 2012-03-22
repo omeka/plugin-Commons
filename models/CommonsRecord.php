@@ -3,11 +3,12 @@
 class CommonsRecord extends Omeka_Record
 {
     public $id;
-    public $commons_import_id;
+    public $commons_item_id;
     public $record_id;
     public $record_type;
     public $last_export;
     public $status;
+    public $status_message;
 
     protected $_related = array(
         'Record' => 'getRecord'
@@ -83,12 +84,16 @@ class CommonsRecord extends Omeka_Record
         $response = $exporter->sendToCommons();
         $itemStatuses = $response['items'];
         $status = $response['items'][$this->record_id];
+        foreach($status as $column=>$value) {
+            $this->$column = $value;
+        }
         release_object($item);
-        $this->status = serialize($status);
     }
 
     private function exportCollection($collection, $withItems = false)
     {
+        //push this off to a job in case there are many items
+
         $exporter = new Commons_Exporter_Collection($collection);
         $exporter->addDataToExport();
         if($withItems) {

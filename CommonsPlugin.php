@@ -165,11 +165,12 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         $sql = "
             CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-              `commons_import_id` int(10) unsigned DEFAULT NULL,
+              `commons_item_id` int(10) unsigned DEFAULT NULL,
               `record_id` int(10) unsigned NOT NULL,
               `record_type` tinytext NOT NULL,
-              `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-              `status` tinytext COLLATE utf8_unicode_ci,
+              `last_export` text,
+              `status` tinytext,
+              `status_message` text,
               PRIMARY KEY (`id`),
               KEY `record_id` (`record_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
