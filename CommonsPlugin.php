@@ -82,9 +82,8 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
                 $record->record_id = $collection->id;
                 $record->record_type = 'Collection';
             }
-            $record->save();
-            //true on a collection record sends along the item data, too.
             $record->export(true);
+            $record->save();
         } else {
             if($record) {
                 $record->delete();
@@ -128,8 +127,8 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
                 $record->record_id = $item->id;
                 $record->record_type = 'Item';
             }
-            $record->save();
             $record->export();
+            $record->save();
         } else {
             if($record) {
                 $record->delete();
@@ -166,7 +165,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         $sql = "
             CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-              `commons_id` int(10) unsigned DEFAULT NULL,
+              `commons_import_id` int(10) unsigned DEFAULT NULL,
               `record_id` int(10) unsigned NOT NULL,
               `record_type` tinytext NOT NULL,
               `last_export` timestamp NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,

@@ -15,7 +15,6 @@ $data = array('data' => $site)
 
 apply = function() {
     data = {data: <?php echo json_encode($site); ?>};
-    console.log(data);
     url = "<?php echo COMMONS_API_APPLY_URL; ?>";
     jQuery.post(url, data, function(response, status, jqXHR) {
         switch(response.status) {

@@ -41,7 +41,9 @@ abstract class Commons_Exporter
         $client->setUri(COMMONS_API_URL);
         $client->setParameterPost('data', $json);
         $response = $client->request('POST');
-        return $response->getBody();
+        $responseBody = substr(stripslashes($response->getBody()), 1, -1);
+        $responseArray = json_decode($responseBody, true);
+        return $responseArray;
     }
 
     static function exportTemplate()

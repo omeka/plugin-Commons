@@ -75,6 +75,7 @@ class Commons_Exporter_Item extends Commons_Exporter
 
     private function tags()
     {
+        $tagsArray = array();
         $tags = get_tags(array('record'=>$this->record), null);
         foreach($tags as $tag) {
             $tagsArray[] = $tag->name;
