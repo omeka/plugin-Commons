@@ -171,8 +171,10 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
               `last_export` text,
               `status` tinytext,
               `status_message` text,
+              `process_id` int(10) unsigned NOT NULL,
               PRIMARY KEY (`id`),
-              KEY `record_id` (`record_id`)
+              KEY `record_id` (`record_id`),
+              KEY `process_id` (`process_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
         ";
 

@@ -15,26 +15,10 @@ class Commons_Exporter_Collection extends Commons_Exporter
         return $collectionArray;
     }
 
-    public function addItemsToExport()
+    public function exportItems()
     {
-        $commonsRecordTable = get_db()->getTable('CommonsRecord');
-        $items = get_items(array('collection'=>$this->record->id), null);
-        foreach($items as $item) {
-            //see if item has a CommonsRecord
-            $itemRecord = $commonsRecordTable->findByTypeAndId('Item', $item->id);
-            if(!$itemRecord) {
-                $itemRecord = new CommonsRecord();
-                $itemRecord->initFromRecord($item);
-            }
-            $itemRecord->export();
-            $itemRecord->save();
-            //$itemExporter = new Commons_Exporter_Item($item);
-            //$this->addDataToExport($itemExporter->recordData, 'items');
-            release_object($item);
-        }
-
+        require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
+        $processDispatcher = new ProcessDispatcher;
+        $processDispatcher->startProcess('Commons_ItemsExportProcess', null, array('collectionId'=>$this->record->id));
     }
-
-
-
 }

@@ -9,6 +9,7 @@ class CommonsRecord extends Omeka_Record
     public $last_export;
     public $status;
     public $status_message;
+    public $process_id;
 
     protected $_related = array(
         'Record' => 'getRecord'
@@ -92,13 +93,15 @@ class CommonsRecord extends Omeka_Record
 
     private function exportCollection($collection, $withItems = false)
     {
-        //push this off to a job in case there are many items
-
         $exporter = new Commons_Exporter_Collection($collection);
         $exporter->addDataToExport();
         if($withItems) {
-            $exporter->addItemsToExport();
+            //$exporter->exportItems fires off a job to prevent timeouts
+            //each item is exported separately
+            $exporter->exportItems();
+            return false;
         }
+
         release_object($collection);
         return $exporter->sendToCommons();
     }
