@@ -12,13 +12,20 @@ class CommonsRecord extends Omeka_Record
     public $process_id;
 
     protected $_related = array(
-        'Record' => 'getRecord'
+        'Record' => 'getRecord',
+        'Process' => 'getProcess'
     );
 
     public function getRecord()
     {
         return $this->getTable($this->record_type)->find($this->record_id);
     }
+
+    public function getProcess()
+    {
+        return $this->getTable('Process')->find($this->process_id);
+    }
+
 
     public function recordLabel()
     {
@@ -101,7 +108,6 @@ class CommonsRecord extends Omeka_Record
             $exporter->exportItems();
             return false;
         }
-
         release_object($collection);
         return $exporter->sendToCommons();
     }
