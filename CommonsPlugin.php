@@ -4,6 +4,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 {
     protected $_hooks = array(
         'admin_append_to_items_show_secondary',
+        'admin_append_to_collections_show_primary',
         'admin_theme_header',
         'admin_append_to_collections_form',
         'after_save_form_collection',
@@ -21,6 +22,17 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         );
 
     protected $_options = array();
+
+    public function hookAdminAppendToCollectionsShowPrimary($collection)
+    {
+        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
+        $html = "<h2>Omeka Commons</h2>";
+        if($record) {
+            $html .= "<p>Items in this collection are part of the Omeka Commons.</p>";
+            $html .= "<p>You can check the status of recently added collections on the <a href='" . uri('commons/index/browse') . "'>Omeka Commons status tab</a>.</p>";
+        }
+        echo $html;
+    }
 
     public function hookAdminAppendToItemsShowSecondary($item)
     {
@@ -76,7 +88,6 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
         $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
         if($collection->public && isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
-
             if(!$record) {
                 $record = new CommonsRecord();
                 $record->record_id = $collection->id;
@@ -93,7 +104,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 
     public function filterAdminNavigationMain($tabs)
     {
-        $tabs['Omeka Commons'] = uri('commons/index/config');
+        $tabs['Omeka Commons'] = uri('commons/index/browse');
         return $tabs;
     }
 
@@ -165,7 +176,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         $sql = "
             CREATE TABLE IF NOT EXISTS `$db->CommonsRecord` (
               `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
-              `commons_item_id` int(10) unsigned DEFAULT NULL,
+              `commons_id` int(10) unsigned DEFAULT NULL,
               `record_id` int(10) unsigned NOT NULL,
               `record_type` tinytext NOT NULL,
               `last_export` text,

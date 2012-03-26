@@ -3,7 +3,7 @@
 class CommonsRecord extends Omeka_Record
 {
     public $id;
-    public $commons_item_id;
+    public $commons_id;
     public $record_id;
     public $record_type;
     public $last_export;
@@ -47,12 +47,9 @@ class CommonsRecord extends Omeka_Record
 
     public function export($options = false)
     {
-        $recordToExport = $this->getTable()->findOmekaRecord($this->record_type, $this->record_id);
         $method = "export" . $this->record_type;
-        $response = json_decode($this->$method($recordToExport, $options), true);
+        $response = json_decode($this->$method($this->Record, $options), true);
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
-        $this->save();
-        return true;
     }
 
     public function makePrivate($item)
@@ -100,16 +97,22 @@ class CommonsRecord extends Omeka_Record
 
     private function exportCollection($collection, $withItems = false)
     {
+
         $exporter = new Commons_Exporter_Collection($collection);
         $exporter->addDataToExport();
         if($withItems) {
             //$exporter->exportItems fires off a job to prevent timeouts
             //each item is exported separately
-            $exporter->exportItems();
-            return false;
+            $processId = $exporter->exportItems();
+            $this->process_id = $processId;
         }
         release_object($collection);
-        return $exporter->sendToCommons();
+        $response = $exporter->sendToCommons();
+        $collectionStatuses = $response['Collections'];
+        $status = $collectionStatuses[$this->record_id];
+        foreach($status as $column=>$value) {
+            $this->$column = $value;
+        }
     }
 
 }

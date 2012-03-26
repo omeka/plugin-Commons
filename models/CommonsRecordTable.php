@@ -29,11 +29,6 @@ class CommonsRecordTable extends Omeka_Db_Table
 
     }
 
-    public function findOmekaRecord($type, $id)
-    {
-        return $this->_db->getTable($type)->find($id);
-    }
-
     public function itemPartOfCommonsCollection($item)
     {
         if($item->Collection) {

@@ -6,15 +6,16 @@ head($head);
 <ul id="section-nav" class="navigation">
 
     <li class="">
-        <a href="<?php echo uri('commons/index/config'); ?>">Commons branding options</a>
-    </li>
-    <li class="">
         <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
     </li>
+    <li class="">
+        <a href="<?php echo uri('commons/index/config'); ?>">Commons branding options</a>
+    </li>
+
 
 </ul>
 <div id='primary'>
-
+<?php echo flash(); ?>
 <form enctype="multipart/form-data" action="" method="post">
 
     <div class='field'>
