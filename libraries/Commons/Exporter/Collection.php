@@ -10,7 +10,7 @@ class Commons_Exporter_Collection extends Commons_Exporter
             'orig_id' => $this->record->id,
             'title' => $this->record->name,
             'description' => $this->record->description,
-            'url' => WEB_ROOT . '/collections/show/' . $this->record->id,
+            'url' => $this->buildRealUrl(WEB_ROOT . '/collections/show/' . $this->record->id),
         );
         return $collectionArray;
     }
@@ -19,7 +19,7 @@ class Commons_Exporter_Collection extends Commons_Exporter
     {
         require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
         $processDispatcher = new ProcessDispatcher;
-        $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', null, array('collectionId'=>$this->record->id));
+        $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', null, array('collectionId'=>$this->record->id, 'webRoot'=>WEB_ROOT));
         return $process->id;
     }
 }

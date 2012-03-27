@@ -25,14 +25,14 @@ class Commons_Exporter_ExhibitPage extends Commons_Exporter
         $exhibitArray['page'] = array(
             'orig_id' => $this->record->id,
             'title' => $this->record->title,
-            'url' => $this->buildRealUrl(exhibit_builder_exhibit_uri($exhibit, $section, $this->record)),
+            'url' => $this->buildRealExhibitUrl(exhibit_builder_exhibit_uri($exhibit, $section, $this->record), -5),
             'site_section_id' => $section->id
         );
         $exhibitArray['section'] = array(
             'orig_id' => $section->id,
             'title' => $section->title,
             'description' => $section->description,
-            'url' => $this->buildRealUrl(exhibit_builder_exhibit_uri($exhibit, $section)),
+            'url' => $this->buildRealExhibitUrl(exhibit_builder_exhibit_uri($exhibit, $section), -4),
             'site_exhibit_id' => $section->exhibit_id
         );
 
@@ -40,7 +40,7 @@ class Commons_Exporter_ExhibitPage extends Commons_Exporter
             'orig_id'=> $exhibit->id,
             'title'=> $exhibit->title,
             'description' => $exhibit->description,
-            'url' => $this->buildRealUrl(exhibit_builder_exhibit_uri($exhibit))
+            'url' => $this->buildRealExhibitUrl(exhibit_builder_exhibit_uri($exhibit), -3)
         );
 
         return $exhibitArray;

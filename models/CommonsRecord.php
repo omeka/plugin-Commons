@@ -70,7 +70,7 @@ class CommonsRecord extends Omeka_Record
         $this->record_type = get_class($record);
     }
 
-    private function exportItem($item)
+    private function exportItem($item, $options = array())
     {
         if(!$item->public) {
             $this->delete();
@@ -86,6 +86,11 @@ class CommonsRecord extends Omeka_Record
             $exporter = new Commons_Exporter_Item($item);
         }
         $exporter->addDataToExport();
+        if(isset($options['webRoot'])) {
+            $exporter->exportData['site_url'] = $options['webRoot'];
+            $exporter->exportData['site']['url'] = $options['webRoot'];
+        }
+_log(print_r($exporter->exportData, true));
         $response = $exporter->sendToCommons();
         $itemStatuses = $response['items'];
         $status = $response['items'][$this->record_id];

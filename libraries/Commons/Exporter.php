@@ -68,15 +68,22 @@ abstract class Commons_Exporter
         return $template;
     }
 
-    public function buildRealUrl($omeka_uri) {
-        $parts = explode('/', $omeka_uri);
-        unset($parts[0]);
-        unset($parts[1]);
+    public function buildRealExhibitUrl($url, $level = -3)
+    {
+        $parts = explode('/', $url);
+
+        $parts = array_slice($parts, $level);
+
         $omeka_uri = implode('/', $parts);
         $url = WEB_ROOT . '/' . $omeka_uri;
-        return $url;
+        return $this->buildRealUrl($url);
     }
 
+    public function buildRealUrl($url) {
 
-
+        if(defined('COMMONS_WEB_ROOT')) {
+            $url = str_replace(WEB_ROOT, COMMONS_WEB_ROOT, $url);
+        }
+        return $url;
+    }
 }

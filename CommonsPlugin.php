@@ -182,7 +182,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
               `last_export` text,
               `status` tinytext,
               `status_message` text,
-              `process_id` int(10) unsigned NOT NULL,
+              `process_id` int(10) unsigned NULL,
               PRIMARY KEY (`id`),
               KEY `record_id` (`record_id`),
               KEY `process_id` (`process_id`)

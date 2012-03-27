@@ -19,6 +19,14 @@ head($head);
 <form enctype="multipart/form-data" action="" method="post">
 
     <div class='field'>
+        <label for='commons_export_all'>Export ALL the items!</label>
+        <div class='inputs'>
+            <input name='commons_export_all' type='checkbox' />
+            <p class='explanation'>You usually only have to do this once. After that, add items to the Omeka Commons as you create them.</p>
+        </div>
+    </div>
+
+    <div class='field'>
         <label for='commons_title_color'>Pick a color for the title of your site on Omeka Commons</label>
         <div class='inputs'>
             <input name='commons_title_color' value='<?php echo get_option('commons_title_color'); ?>' type='text' />

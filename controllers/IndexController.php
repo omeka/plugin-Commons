@@ -46,6 +46,12 @@ class Commons_IndexController extends Omeka_Controller_Action
             }
             set_option('commons_title_color', $_POST['commons_title_color']);
 
+            if($_POST['commons_export_all'] == 'on') {
+                require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
+                $processDispatcher = new ProcessDispatcher;
+                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', array('webRoot'=>WEB_ROOT));
+            }
+
             $data = Commons_Exporter::exportTemplate();
             $data['configSite'] = true;
             $json = json_encode($data);

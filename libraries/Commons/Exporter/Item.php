@@ -9,7 +9,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     {
         $itemArray = array(
             'orig_id' => $this->record->id,
-            'url' => WEB_ROOT . '/items/show/' . $this->record->id,
+            'url' => $this->buildRealUrl(WEB_ROOT . '/items/show/' . $this->record->id),
             'collection' => $this->record->collection_id,
             'itemTypeName' => $this->itemTypeName(),
             'elementTexts' => $this->elementTexts(),
@@ -68,7 +68,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     {
         $filesArray = array();
         foreach($this->record->Files as $file) {
-            $filesArray[] = WEB_ROOT . "/archive/files/" . $file->archive_filename;
+            $filesArray[] = $this->buildRealUrl(file_display_uri($file, 'archive'));
         }
         return $filesArray;
     }
