@@ -57,6 +57,7 @@ abstract class Commons_Exporter
                     'author_info' => get_option('author'),
                     'url' => WEB_ROOT,
                     'logo_url' => get_option('commons_logo_url'),
+                    'banner_url' => get_option('commons_banner_url'),
                     'commons_title_color' =>get_option('commons_title_color')
                     );
         $template = array(
