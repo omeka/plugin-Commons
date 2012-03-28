@@ -90,13 +90,21 @@ class CommonsRecord extends Omeka_Record
             $exporter->exportData['site_url'] = $options['webRoot'];
             $exporter->exportData['site']['url'] = $options['webRoot'];
         }
-_log(print_r($exporter->exportData, true));
+
         $response = $exporter->sendToCommons();
-        $itemStatuses = $response['items'];
-        $status = $response['items'][$this->record_id];
-        foreach($status as $column=>$value) {
-            $this->$column = $value;
+
+        //record errors related to authentication before checking item save status
+        if($response['status'] == 'error') {
+            $this->status_message = $response['messages'];
+            $this->status = 'error';
+        } else {
+            $itemStatuses = $response['items'];
+            $status = $response['items'][$this->record_id];
+            foreach($status as $column=>$value) {
+                $this->$column = $value;
+            }
         }
+
         release_object($item);
     }
 
@@ -113,10 +121,16 @@ _log(print_r($exporter->exportData, true));
         }
         release_object($collection);
         $response = $exporter->sendToCommons();
-        $collectionStatuses = $response['Collections'];
-        $status = $collectionStatuses[$this->record_id];
-        foreach($status as $column=>$value) {
-            $this->$column = $value;
+        //record errors related to authentication before checking collection save status
+        if($response['status'] == 'error') {
+            $this->status_message = $response['messages'];
+            $this->status = 'error';
+        } else {
+            $collectionStatuses = $response['Collections'];
+            $status = $collectionStatuses[$this->record_id];
+            foreach($status as $column=>$value) {
+                $this->$column = $value;
+        }
         }
     }
 
