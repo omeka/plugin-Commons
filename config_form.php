@@ -15,10 +15,16 @@ $data = array('data' => $site)
 
 apply = function() {
     data = {data: <?php echo json_encode($site); ?>};
-    url = "<?php echo COMMONS_API_APPLY_URL; ?>";
+    url = "<?php echo uri('commons/index/apply') ?>";
     jQuery.post(url, data, function(response, status, jqXHR) {
+        response = JSON.parse(response);
+        //someday these should do something fancier and different based on response status
         switch(response.status) {
             case 'OK':
+                alert(response.message);
+            break;
+
+            case 'ERROR':
                 alert(response.message);
             break;
 

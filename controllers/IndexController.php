@@ -18,10 +18,30 @@ class Commons_IndexController extends Omeka_Controller_Action
         $this->view->assign('commons_records', $cRecords);
     }
 
+    /**
+     * passes the request to apply along to the Commons so JS doesn't try to AJAX to different domain
+     */
+
+    public function applyAction()
+    {
+        $client = new Zend_Http_Client();
+        $client->setURI(COMMONS_API_APPLY_URL);
+        if(empty($_POST)) {
+            $response = array('status' => 'ERROR', 'message' => "Couldn't connect to server. Please try again");
+            $this->_helper->json($response);
+            die();
+        }
+        $client->setParameterPost('data', $_POST['data']);
+
+        $response = $client->request('POST');
+        //$this->_helper->json($response->getBody());
+        echo $response->getBody();
+        die();
+    }
+
 
     public function configAction()
     {
-
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
 
