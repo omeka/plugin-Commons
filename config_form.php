@@ -19,11 +19,11 @@ apply = function() {
     jQuery.post(url, data, function(response, status, jqXHR) {
         switch(response.status) {
             case 'OK':
-                alert("Thanks! You should receive an email shortly with a link to follow with more info.");
+                alert(response.message);
             break;
 
             case 'EXISTS':
-                alert("Looks like you're already registered. this message should go away, because you should not have seen the link in the first place. Blame Patrick");
+                alert(response.message);
             break;
         }
     });
@@ -35,7 +35,7 @@ apply = function() {
 
 <div>
 <p>Filler about the Commons yaddayaddayadda</p>
-<a onclick="apply();">Click here to apply</a>
+<a id="commons-approve" onclick="apply();">Click here to apply</a>
 
 
 </div>
