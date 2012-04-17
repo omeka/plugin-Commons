@@ -2,7 +2,9 @@
 
 if(!class_exists('Omeka_Plugin_Abstract')) {
     require_once 'Omeka_Plugin_Abstract.php';
-    //we're below 1.4, so add some additional functions
+}
+
+if(!function_exists('plugin_is_active')){
 
     function plugin_is_active($name, $version = null, $compOperator = '>=')
     {
@@ -19,8 +21,8 @@ if(!class_exists('Omeka_Plugin_Abstract')) {
             return true;
         }
     }
-
 }
+
 
 define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');

@@ -45,11 +45,17 @@ class Commons_IndexController extends Omeka_Controller_Action
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
 
+        if(! is_writable(COMMONS_PLUGIN_DIR . '/commons_images')) {
+            $this->flashError('commons_images directory must be writable by the server');
+        }
+
+
         if(!empty($_POST)) {
             if(!empty($_FILES['commons_logo']['name'])) {
                 $filePath = COMMONS_PLUGIN_DIR . '/commons_images/' . $_FILES['commons_logo']['name'];
                 if(!move_uploaded_file($_FILES['commons_logo']['tmp_name'], $filePath)) {
-                    throw new Exception('Could not save the file to ' . $filePath);
+                    $this->flashError('Could not save the file to ' . $filePath);
+                    return;
                 }
                 $client->setFileUpload($filePath, 'logo');
                 $logo_url = WEB_ROOT . '/plugins/Commons/commons_images/' . $_FILES['commons_logo']['name'];
