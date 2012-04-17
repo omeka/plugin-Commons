@@ -1,5 +1,9 @@
 <?php
 
+if(!class_exists('Omeka_Plugin_Abstract')) {
+    require_once 'Omeka_Plugin_Abstract.php';
+}
+
 define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
 
