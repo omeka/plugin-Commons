@@ -68,8 +68,18 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 
     public function hookAdminThemeHeader()
     {
-        queue_js('commons');
-        queue_css('commons');
+
+        if(version_compare(OMEKA_VERSION, '1.3', '<')) {
+            $jquerySrc = WEB_PLUGIN . '/Commons/views/admin/javascripts/jquery.js';
+            $commonsJsSrc = WEB_PLUGIN . '/Commons/views/admin/javascripts/commons.js';
+            $commonsCssLink = WEB_PLUGIN . '/Commons/views/admin/css/commons.css';
+            echo "<script type='text/javascript' src='$jquerySrc'></script>";
+            echo "<script type='text/javascript' src='$commonsJsSrc'></script>";
+            echo "<link rel='stylesheet' href='$commonsCssLink'></link>";
+        } else {
+            queue_js('commons');
+            queue_css('commons');
+        }
     }
 
     public function hookAdminAppendToCollectionsForm($collection)

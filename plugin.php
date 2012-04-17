@@ -23,6 +23,35 @@ if(!function_exists('plugin_is_active')){
     }
 }
 
+if(!function_exists('queue_js')) {
+
+    function queue_js($file, $dir = 'javascripts')
+    {
+        if (is_array($file)) {
+            foreach($file as $singleFile) {
+                queue_js($singleFile, $dir);
+            }
+            return;
+        }
+        __v()->headScript()->appendFile(src($file, $dir, 'js'));
+    }
+
+}
+
+if(!function_exists('queue_css')) {
+    function queue_css($file, $media = 'all', $conditional = false, $dir = 'css')
+    {
+        if (is_array($file)) {
+            foreach($file as $singleFile) {
+                queue_css($singleFile, $media, $conditional, $dir);
+            }
+            return;
+        }
+        __v()->headLink()->appendStylesheet(css($file, $dir), $media, $conditional);
+    }
+
+}
+
 
 define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
