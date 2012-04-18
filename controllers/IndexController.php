@@ -78,7 +78,11 @@ class Commons_IndexController extends Omeka_Controller_Action
 
             $client->setParameterPost('data', $json);
             $response = $client->request('POST');
-            return $response->getBody();
+            $responseJson = json_decode( $response->getBody() , true );
+            if($responseJson['status'] == 'error') {
+                $this->flashError($responseJson['status']);
+            }
+
         }
     }
 
