@@ -83,7 +83,6 @@ class Commons_IndexController extends Omeka_Controller_Action
             if($responseJson['status'] == 'error') {
                 $this->flashError($responseJson['status']);
             }
-
         }
     }
 

@@ -119,6 +119,7 @@ class CommonsRecord extends Omeka_Record
             $processId = $exporter->exportItems();
             $this->process_id = $processId;
         }
+
         release_object($collection);
         $response = $exporter->sendToCommons();
         //record errors related to authentication before checking collection save status
@@ -127,11 +128,11 @@ class CommonsRecord extends Omeka_Record
             $this->status = 'error';
         } else {
             $collectionStatuses = $response['Collections'];
-            $status = $collectionStatuses[$this->record_id];
-            foreach($status as $column=>$value) {
+            $status = array_values($collectionStatuses);
+            foreach($status[0] as $column=>$value) {
                 $this->$column = $value;
+            }
         }
-        }
+        $this->save();
     }
-
 }

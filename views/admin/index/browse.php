@@ -38,7 +38,9 @@ head($head);
     <br/>
     <a href="<?php echo commons_source_record_uri($record, 'edit'); ?>">Local page</a>
     <br/>
-    <a href="<?php echo COMMONS_BASE_URL . '/items/show/' . $record->commons_id; ?>">Commons page</a>
+    <?php if($record->type == 'Item'): ?>
+        <a href="<?php echo COMMONS_BASE_URL . '/items/show/' . $record->commons_id; ?>">Commons page</a>
+    <?php endif; ?>
 </td>
 <td><?php echo $record->record_type; ?></td>
 <td><?php echo $record->last_export;  ?></td>
