@@ -24,6 +24,7 @@ class Commons_ItemsExportProcess extends ProcessAbstract
 
         }
         $items = $iTable->fetchObjects($select);
+_log('item count: ' . count($items));
         $commonsRecordTable = get_db()->getTable('CommonsRecord');
         foreach($items as $item) {
             //see if item has a CommonsRecord
