@@ -12,12 +12,6 @@ class Commons_IndexController extends Omeka_Controller_Action
         }
     }
 
-    public function browseAction()
-    {
-        $cRecords = $this->getTable()->findAll();
-        $this->view->assign('commons_records', $cRecords);
-    }
-
     /**
      * passes the request to apply along to the Commons so JS doesn't try to AJAX to different domain
      */
@@ -84,6 +78,7 @@ class Commons_IndexController extends Omeka_Controller_Action
 
             $client->setParameterPost('data', $json);
             $response = $client->request('POST');
+
             $responseJson = json_decode( $response->getBody() , true );
             if($responseJson['status'] == 'error') {
                 $this->flashError($responseJson['status']);

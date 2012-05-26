@@ -29,10 +29,11 @@ head($head);
     <th>Collection/Site Export Info</th>
 </tr>
 <tbody>
-<?php while(loop_records('commons_records', $commons_records, 'commons_set_current_record')):  ?>
+<?php while(loop_records('commons_records', $commonsrecords, 'commons_set_current_record')):  ?>
 <tr>
 <?php $record = commons_get_current_record(); ?>
 <td>
+
     <a><?php echo $record->recordLabel(); ?></a>
     <br/>
     <a href="<?php echo commons_source_record_uri($record, 'edit'); ?>">Local page</a>
