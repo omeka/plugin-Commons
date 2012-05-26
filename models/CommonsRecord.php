@@ -124,7 +124,6 @@ class CommonsRecord extends Omeka_Record
         $response = $exporter->sendToCommons();
         //record errors related to authentication before checking collection save status
         if($response['status'] == 'error') {
-
             $this->status_message = $response['messages'];
             $this->status = 'error';
         } else {
@@ -136,5 +135,4 @@ class CommonsRecord extends Omeka_Record
         }
         $this->save();
     }
-
 }

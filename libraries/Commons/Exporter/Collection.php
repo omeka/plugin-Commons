@@ -17,12 +17,9 @@ class Commons_Exporter_Collection extends Commons_Exporter
 
     public function exportItems()
     {
-_log('exportItems 1');
         require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
         $processDispatcher = new ProcessDispatcher;
-_log('exportItems 2');
         $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', null, array('collectionId'=>$this->record->id, 'webRoot'=>WEB_ROOT));
-_log('exportItems 3');
         return $process->id;
     }
 }

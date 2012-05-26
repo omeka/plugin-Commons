@@ -97,18 +97,14 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
             return;
         }
         $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-_log('hook 1');
         if($collection->public && isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
             if(!$record) {
                 $record = new CommonsRecord();
                 $record->record_id = $collection->id;
                 $record->record_type = 'Collection';
             }
-_log('hook 2');
             $record->export(true);
-_log('hook 3');
             $record->save();
-_log('hook 4');
         } else {
             if($record) {
                 $record->delete();

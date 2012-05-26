@@ -66,7 +66,6 @@ class Commons_IndexController extends Omeka_Controller_Action
                 if(!move_uploaded_file($_FILES['commons_banner']['tmp_name'], $filePath)) {
                     throw new Exception('Could not save the file to ' . $filePath);
                 }
-_log('has banner: ' . $filePath);
                 $client->setFileUpload($filePath, 'banner');
                 $banner_url = WEB_ROOT . '/plugins/Commons/commons_images/' . $_FILES['commons_banner']['name'];
                 set_option('commons_banner_url', $banner_url);
@@ -87,9 +86,8 @@ _log('has banner: ' . $filePath);
             $response = $client->request('POST');
             $responseJson = json_decode( $response->getBody() , true );
             if($responseJson['status'] == 'error') {
-                $this->flashError($response->getBody());
+                $this->flashError($responseJson['status']);
             }
-
         }
     }
 
