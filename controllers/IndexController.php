@@ -69,7 +69,7 @@ class Commons_IndexController extends Omeka_Controller_Action
             if($_POST['commons_export_all'] == 'on') {
                 require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
                 $processDispatcher = new ProcessDispatcher;
-                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', array('webRoot'=>WEB_ROOT));
+                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));
             }
 
             $data = Commons_Exporter::exportTemplate();
