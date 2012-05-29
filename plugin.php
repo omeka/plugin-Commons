@@ -3,7 +3,9 @@
 if(!class_exists('Omeka_Plugin_Abstract')) {
     require_once 'Omeka_Plugin_Abstract.php';
 }
-/*
+
+require_once(HELPERS);
+
 if(!function_exists('plugin_is_active')){
 
     function plugin_is_active($name, $version = null, $compOperator = '>=')
@@ -50,12 +52,9 @@ if(!function_exists('queue_css')) {
     }
 
 }
-*/
 
 define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
-
-
 
  /*
 define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
