@@ -123,8 +123,12 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         if(!get_option('commons_key')) {
             return;
         }
-        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-        $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
+
+        if($item->exists()) {
+            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        }
+
+        $tabs['Omeka Commons'] = $this->commonsForm($record);
         return $tabs;
     }
 
