@@ -7,24 +7,14 @@ class Commons_ItemsExportProcess extends ProcessAbstract
 
     public function run($args)
     {
-        $db = get_db();
-        $iTable = $db->getTable('Item');
-        $select = $iTable->getSelect();
         define('COMMONS_WEB_ROOT', $args['webRoot']);
         $this->webRoot = $args['webRoot'];
         if(isset($args['collectionId'])) {
-            $collectionId = $args['collectionId'];
-            //$params = array('collection'=>$collectionId);
-            //$items = get_items($params);
-            $select->where('collection_id = ?', $collectionId);
-            $select->where('public = ?', 1);
+            $items = get_items(array('collection'=>$args['collectionId']), null);
         } else {
-            //$items = get_items(array('public'=>true));
-            $select->where('public = ?', 1);
-
+            $items = get_items(array('public'=>true));
         }
-        $items = $iTable->fetchObjects($select);
-_log('item count: ' . count($items));
+
         $commonsRecordTable = get_db()->getTable('CommonsRecord');
         foreach($items as $item) {
             //see if item has a CommonsRecord
@@ -33,6 +23,7 @@ _log('item count: ' . count($items));
                 $itemRecord = new CommonsRecord();
                 $itemRecord->initFromRecord($item);
             }
+
             $itemRecord->export(array('webRoot' => $this->webRoot));
             $itemRecord->process_id = $this->_process->id;
             $itemRecord->save();

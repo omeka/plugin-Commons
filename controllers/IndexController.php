@@ -12,6 +12,12 @@ class Commons_IndexController extends Omeka_Controller_Action
         }
     }
 
+    public function browseAction()
+    {
+        $cRecords = $this->getTable()->findAll();
+        $this->view->assign('commons_records', $cRecords);
+    }
+
     /**
      * passes the request to apply along to the Commons so JS doesn't try to AJAX to different domain
      */
@@ -69,7 +75,7 @@ class Commons_IndexController extends Omeka_Controller_Action
             if($_POST['commons_export_all'] == 'on') {
                 require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
                 $processDispatcher = new ProcessDispatcher;
-                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));
+                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', array('webRoot'=>WEB_ROOT));
             }
 
             $data = Commons_Exporter::exportTemplate();
@@ -78,11 +84,11 @@ class Commons_IndexController extends Omeka_Controller_Action
 
             $client->setParameterPost('data', $json);
             $response = $client->request('POST');
-
             $responseJson = json_decode( $response->getBody() , true );
             if($responseJson['status'] == 'error') {
                 $this->flashError($responseJson['status']);
             }
+
         }
     }
 
