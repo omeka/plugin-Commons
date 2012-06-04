@@ -126,11 +126,11 @@ class CommonsRecord extends Omeka_Record
             $this->status = 'error';
         } else {
             $collectionStatuses = $response['Collections'];
-            $status = array_values($collectionStatuses);
-            foreach($status[0] as $column=>$value) {
+            $status = $collectionStatuses[$this->record_id];
+            foreach($status as $column=>$value) {
                 $this->$column = $value;
-            }
+        }
+
         }
     }
-
 }

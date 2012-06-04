@@ -20,10 +20,9 @@ class Commons_ItemsExportProcess extends ProcessAbstract
         } else {
             //$items = get_items(array('public'=>true));
             $select->where('public = ?', 1);
-    
+
         }
         $items = $iTable->fetchObjects($select);
-        
         $commonsRecordTable = get_db()->getTable('CommonsRecord');
         foreach($items as $item) {
             //see if item has a CommonsRecord
