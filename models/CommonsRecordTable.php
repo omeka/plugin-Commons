@@ -21,6 +21,8 @@ class CommonsRecordTable extends Omeka_Db_Table
         return $select;
     }
 
+    
+        
     public function findByTypeAndId($type, $id)
     {
         $params = array('record_type'=>$type, 'record_id'=>$id);

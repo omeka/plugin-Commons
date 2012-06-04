@@ -123,7 +123,11 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         if(!get_option('commons_key')) {
             return;
         }
-        $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+
+        if($item->exists()) {
+            $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        }
+
         $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
         return $tabs;
     }
@@ -218,10 +222,19 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
     }
 
-    private function commonsForm($record)
+    private function commonsForm($record, $recordType)
     {
+        switch($recordType) {
+            case 'Item':
+                $text = "Add this item to the Omeka Commons?";
+            break;
+
+            case 'Collection':
+                $text = "Add items in this collection to the Omeka Commons?";
+            break;
+        }
         $html = "<fieldset>";
-        $html .= "<label for='in_commons'>Make part of Omeka Commons?</label><input type='checkbox' name='in_commons'";
+        $html .= "<label for='in_commons'>$text</label><input type='checkbox' name='in_commons'";
 
         if($record) {
             $html .= " checked='checked' />";
@@ -230,114 +243,10 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
 
         $html .= "</fieldset>";
-/*
-        $licenses = array(
-            'cc-0',
-            'by',
-            'by-nd',
-            'by-nc-sa',
-            'by-sa',
-            'by-nc',
-            'by-nc-nd'
-            );
 
-        $html .= "<fieldset>";
-        $html .= "<br/><br/>";
-        $html .= "<label for='commons_license'>Assign a license</label></br>";
-        foreach($licenses as $license) {
-            $html .= "<br/>";
-            if($record && $record->license && ($record->license == $license)) {
-                $selected = "checked='checked'";
-            } else {
-                $selected = '';
-            }
-            $html .= "<input type='radio' name='commons_license' value='$license' $selected />";
-            $html .= "<span>";
-            $html .= $this->licenseText($license, array('no_link', 'long_label'));
-            $html .= "</span>";
-
-        }
-
-        $html .= "</fieldset>";
-*/
         return $html;
     }
 
-
-    private function licenseText($license, $display = null)
-    {
-        if(!$display) {
-            $display = unserialize(get_option('commons_license_display'));
-            $display = array('button');
-        }
-
-        $licenseData = array(
-            'cc-0' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/cc-0.png',
-                'link'=>'http://creativecommons.org/licenses/cc-zero/3.0',
-                'short_label'=>'CC-0',
-                'long_label'=>'Public Domain Dedication'
-            ),
-
-            'by' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by.png',
-                'link'=>'http://creativecommons.org/licenses/by/3.0',
-                'short_label'=>'BY',
-                'long_label'=>'Attribution'
-            ),
-            'by-nd' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nd.png',
-                'link'=>'http://creativecommons.org/licenses/by-nd/3.0',
-                'short_label'=>'BY-ND',
-                'long_label'=>'Attribution-NoDerivs'
-            ),
-            'by-nc-sa' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc-sa.png',
-                'link'=>'http://creativecommons.org/licenses/by-nc-sa/3.0',
-                'short_label'=>'BY-NC-SA',
-                'long_label'=>'Attribution-NonCommercial-ShareAlike'
-            ),
-            'by-sa' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-sa.png',
-                'link'=>'http://creativecommons.org/licenses/by-sa/3.0',
-                'short_label'=>'BY-SA',
-                'long_label'=>'Attribution-ShareAlike'
-            ),
-            'by-nc' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc.png',
-                'link'=>'http://creativecommons.org/licenses/by-nc/3.0',
-                'short_label'=>'BY-NC',
-                'long_label'=>'Attribution-NonCommercial'
-            ),
-            'by-nc-nd' => array(
-                'button'=> WEB_ROOT . '/plugins/Sites/views/shared/images/by-nc-nd.png',
-                'link'=>'http://creativecommons.org/licenses/by-nc-nd/3.0',
-                'short_label'=>'BY-NC-ND',
-                'long_label'=>'Attribution-NonCommercial-NoDerivs'
-            ),
-        );
-
-        if(in_array('no_link', $display)) {
-            $html = '';
-        } else {
-            $html = "<a href='" . $licenseData[$license]['link'] . "'>";
-        }
-
-        if(in_array('button', $display)) {
-            $html .= "<img class='sites-license-block' src='" . $licenseData[$license]['button'] . "'/>";
-        }
-        if(in_array('short_label', $display )) {
-            $html .= $licenseData[$license]['short_label'];
-        }
-        if(in_array('long_label', $display )) {
-            $html .= $licenseData[$license]['long_label'];
-        }
-        if(!in_array('no_link', $display)) {
-            $html .= "</a>";
-        }
-        return $html;
-
-    }
 }
 
 

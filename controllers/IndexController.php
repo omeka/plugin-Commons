@@ -2,6 +2,7 @@
 
 class Commons_IndexController extends Omeka_Controller_Action
 {
+    protected $_browseRecordsPerPage = 10;
 
     public function init()
     {
@@ -12,6 +13,19 @@ class Commons_IndexController extends Omeka_Controller_Action
         }
     }
 
+    public function browseAction()
+    {
+        if(!$this->_hasParam('sort_field')) {
+            $this->_setParam('sort_field', 'last_export');
+        }
+    
+        if(!$this->_hasParam('sort_dir')) {
+            $this->_setParam('sort_dir', 'd');
+        }
+        parent::browseAction();
+    }
+    
+    
     /**
      * passes the request to apply along to the Commons so JS doesn't try to AJAX to different domain
      */
@@ -78,7 +92,6 @@ class Commons_IndexController extends Omeka_Controller_Action
 
             $client->setParameterPost('data', $json);
             $response = $client->request('POST');
-
             $responseJson = json_decode( $response->getBody() , true );
             if($responseJson['status'] == 'error') {
                 $this->flashError($responseJson['status']);

@@ -12,12 +12,12 @@ head($head);
     <li class="">
         <a href="<?php echo uri('commons/index/config'); ?>">Commons branding options</a>
     </li>
-
-
-
 </ul>
+
 <div id='primary'>
 <?php echo flash(); ?>
+<div class="pagination"><?php echo pagination_links(); ?></div>
+
 <table>
 <thead>
 <tr>

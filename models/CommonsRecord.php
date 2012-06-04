@@ -50,6 +50,7 @@ class CommonsRecord extends Omeka_Record
         $method = "export" . $this->record_type;
         $response = json_decode($this->$method($this->Record, $options), true);
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
+        $this->save();
     }
 
     public function makePrivate($item)
@@ -104,24 +105,21 @@ class CommonsRecord extends Omeka_Record
                 $this->$column = $value;
             }
         }
-
         release_object($item);
     }
 
     private function exportCollection($collection, $withItems = false)
     {
-
         $exporter = new Commons_Exporter_Collection($collection);
         $exporter->addDataToExport();
         if($withItems) {
             //$exporter->exportItems fires off a job to prevent timeouts
             //each item is exported separately
-            $processId = $exporter->exportItems();
+            $processId = $exporter->exportItems();            
             $this->process_id = $processId;
         }
-
         release_object($collection);
-        $response = $exporter->sendToCommons();
+        $response = $exporter->sendToCommons();        
         //record errors related to authentication before checking collection save status
         if($response['status'] == 'error') {
             $this->status_message = $response['messages'];
@@ -133,6 +131,6 @@ class CommonsRecord extends Omeka_Record
                 $this->$column = $value;
             }
         }
-        $this->save();
     }
+
 }

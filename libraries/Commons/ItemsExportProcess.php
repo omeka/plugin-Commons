@@ -4,7 +4,6 @@ class Commons_ItemsExportProcess extends ProcessAbstract
 {
 
     public $webRoot; //WEB_ROOT constant doesn't work in a process
-
     public function run($args)
     {
         $db = get_db();
@@ -21,10 +20,10 @@ class Commons_ItemsExportProcess extends ProcessAbstract
         } else {
             //$items = get_items(array('public'=>true));
             $select->where('public = ?', 1);
-
+    
         }
         $items = $iTable->fetchObjects($select);
-_log('item count: ' . count($items));
+        
         $commonsRecordTable = get_db()->getTable('CommonsRecord');
         foreach($items as $item) {
             //see if item has a CommonsRecord
