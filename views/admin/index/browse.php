@@ -17,6 +17,29 @@ head($head);
 <div id='primary'>
 <?php echo flash(); ?>
 <div class="pagination"><?php echo pagination_links(); ?></div>
+<form method="post" >
+
+<style type="text/css">
+input#commons-submit {
+    float:none;
+}
+
+label#commons-check-label, label#commons-delete-all-label {
+    display: inline;
+    margin-right: 10px;
+    float:none;
+}
+</style>
+
+
+<input id='commons-submit' type="submit" class="delete" name="submit" value="Submit" />
+<div id="commons-check-all-div">    
+    <input type="checkbox" id="commons-check-all"  />
+    <label id='commons-check-label' for="check-all">Check All for deletion</label>
+    <input type="checkbox" id="commons-delete-all" name='commons-delete-all' />
+    <label id="commons-delete-all-label" for="commons-delete-all">Delete ALL the records on all pages</label>
+    <p>Deleting this information does not affect your items or the Commons in any way. It just erases the record of the transfer of data to the Commons.</p>
+</div>
 
 <table>
 <thead>
@@ -33,7 +56,7 @@ head($head);
 <tr>
 <?php $record = commons_get_current_record(); ?>
 <td>
-
+    <input type="checkbox" class='commons-batch-select' name="commons-delete[]" value="<?php echo $record->id; ?>" />
     <a><?php echo $record->recordLabel(); ?></a>
     <br/>
     <a href="<?php echo commons_source_record_uri($record, 'edit'); ?>">Local page</a>
@@ -63,7 +86,7 @@ head($head);
 </tbody>
 </table>
 
-
+</form>
 </div>
 
 

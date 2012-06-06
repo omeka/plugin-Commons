@@ -9,14 +9,30 @@ var Commons = {
 	},
 	
 	addResponseHandler: function(response) {
-		title = jQuery('#dublin-core-title div').html();
-		alert(response);
+		title = jQuery('#dublin-core-title div').html();		
 		jQuery('#commons-item-add').replaceWith('<p> "' + title + '" is now part of the Omeka Commons!</p>');
-	}
+	},
+		
+    toggleSelected: function() {        
+        if(jQuery(this).is(':checked')) {
+            Commons.batchSelect();
+            
+        } else {
+            Commons.batchUnselect();
+        }
+    },
+    
+    batchSelect: function() {
+        jQuery('input.commons-batch-select').attr('checked', 'checked');
+    },
+    
+    batchUnselect: function() {
+        jQuery('input.commons-batch-select').removeAttr('checked');
+    }   	
+	
 };
 
-
-
 jQuery(document).ready(function() {
-	jQuery('#commons-item-add').click(Commons.addItem);	
+	jQuery('#commons-item-add').click(Commons.addItem);
+	jQuery('#commons-check-all').click(Commons.toggleSelected);
 }); 
