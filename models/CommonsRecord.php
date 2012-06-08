@@ -55,11 +55,12 @@ class CommonsRecord extends Omeka_Record
 
     public function makePrivate($item)
     {
-        $data = Commons_Exporter::getTemplate();
-        $data['deleteItem'] = $item->id;
+        
+        $data = Commons_Exporter::exportTemplate();
+        $data['privatizeItem'] = $item->id;
         $json = json_encode($data);
         $client = new Zend_Http_Client();
-        $client->setUri(COMMONS_API_URL);
+        $client->setUri(COMMONS_API_URL . '/privatize-item');
         $client->setParameterPost('data', $json);
         $response = $client->request('POST');
         return $response->getBody();
