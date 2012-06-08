@@ -170,6 +170,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if($record) {
             $record->makePrivate($item);
+            $record->delete();
         }
 
     }
