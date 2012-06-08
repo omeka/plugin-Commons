@@ -18,7 +18,7 @@ class Commons_Exporter_Item extends Commons_Exporter
         );
         if(plugin_is_active('ExhibitBuilder')) {
             $itemArray['exhibitPages'] = $this->exhibitPages();
-        }
+        }   
         return $itemArray;
 
     }
@@ -44,9 +44,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     private function elementTexts()
     {
         $ops = array('return_type'=> 'array');
-_log('before elTexts');
         $elTexts = show_item_metadata($ops, $this->record);
-_log('after elTexts');        
         foreach($elTexts as $set=>$elements) {
           foreach($elements as $element=>$texts) {
             foreach($texts as $index=>$text) {
