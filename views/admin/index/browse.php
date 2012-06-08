@@ -5,12 +5,14 @@ head($head);
 
 ?>
 <ul id="section-nav" class="navigation">
-
     <li class="">
-        <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
+        <a href="<?php echo uri('commons/index/share'); ?>">Share via Omeka Commons</a>
     </li>
     <li class="">
-        <a href="<?php echo uri('commons/index/config'); ?>">Commons branding options</a>
+        <a href="<?php echo uri('commons/index/branding'); ?>">Commons branding options</a>
+    </li>
+    <li class="">
+        <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
     </li>
 </ul>
 
@@ -35,7 +37,7 @@ label#commons-check-label, label#commons-delete-all-label {
 <input id='commons-submit' type="submit" class="delete" name="submit" value="Submit" />
 <div id="commons-check-all-div">    
     <input type="checkbox" id="commons-check-all"  />
-    <label id='commons-check-label' for="check-all">Check All for deletion</label>
+    <label id='commons-check-label' for="check-all">Check all on this page for deletion</label>
     <input type="checkbox" id="commons-delete-all" name='commons-delete-all' />
     <label id="commons-delete-all-label" for="commons-delete-all">Delete ALL the records on all pages</label>
     <p>Deleting this information does not affect your items or the Commons in any way. It just erases the record of the transfer of data to the Commons.</p>

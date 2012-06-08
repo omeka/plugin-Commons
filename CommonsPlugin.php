@@ -114,7 +114,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
 
     public function filterAdminNavigationMain($tabs)
     {
-        $tabs['Omeka Commons'] = uri('commons/index/browse');
+        $tabs['Omeka Commons'] = uri('commons/index/share');
         return $tabs;
     }
 

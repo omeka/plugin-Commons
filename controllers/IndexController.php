@@ -12,7 +12,7 @@ class Commons_IndexController extends Omeka_Controller_Action
             $this->_modelClass = 'CommonsRecord';
         }
     }
-
+    
     public function browseAction()
     {
         if(isset($_POST['commons-delete-all']) && $_POST['commons-delete-all'] == 'on') {
@@ -63,7 +63,7 @@ class Commons_IndexController extends Omeka_Controller_Action
     }
 
 
-    public function configAction()
+    public function brandingAction()
     {
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
@@ -95,12 +95,6 @@ class Commons_IndexController extends Omeka_Controller_Action
             }
             set_option('commons_title_color', $_POST['commons_title_color']);
 
-            if($_POST['commons_export_all'] == 'on') {
-                require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
-                $processDispatcher = new ProcessDispatcher;
-                $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));
-            }
-
             $data = Commons_Exporter::exportTemplate();
             $data['configSite'] = true;
             $json = json_encode($data);
@@ -112,6 +106,33 @@ class Commons_IndexController extends Omeka_Controller_Action
                 $this->flashError($responseJson['status']);
             }
         }
+    }
+    
+    public function shareAction()
+    {
+        
+        if($_POST['commons_export_all'] == 'on') {
+            require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
+            $processDispatcher = new ProcessDispatcher;
+            $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));
+        } else if(!empty($_POST['commons-collections'])) {
+            foreach($_POST['commons-collections'] as $collectionId) {
+                $record = $this->_helper->db->getTable('CommonsRecord')->findByTypeAndId('Collection', $collectionId);
+                if(!$record) {
+                    $record = new CommonsRecord();
+                    $record->record_id = $collectionId;
+                    $record->record_type = 'Collection';
+                }
+                $record->export(true);
+                $record->save();                
+            }
+            
+        }
+        
+        //get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public
+        //DATA about the collection will only go if the collection itself is public
+        $collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
+        $this->view->collections = $collections;        
     }
 
 }
