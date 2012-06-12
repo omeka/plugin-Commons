@@ -40,9 +40,14 @@ abstract class Commons_Exporter
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
         $client->setParameterPost('data', $json);
-        $response = $client->request('POST');
-        $responseBody = substr(stripslashes($response->getBody()), 1, -1);
-        $responseArray = json_decode($responseBody, true);
+        try {
+            $response = $client->request('POST');
+            $responseBody = substr(stripslashes($response->getBody()), 1, -1);
+            $responseArray = json_decode($responseBody, true);            
+        } catch (Exception $e) {
+            $responseArray = array('status'=>'error', 'messages'=>$e);
+        }
+
         return $responseArray;
     }
 

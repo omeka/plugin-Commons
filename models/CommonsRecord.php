@@ -93,8 +93,9 @@ class CommonsRecord extends Omeka_Record
             $exporter->exportData['site']['url'] = $options['webRoot'];
         }
 
+        
         $response = $exporter->sendToCommons();
-
+    
         //record errors related to authentication before checking item save status
         if($response['status'] == 'error') {
             $this->status_message = $response['messages'];
@@ -120,7 +121,8 @@ class CommonsRecord extends Omeka_Record
             $this->process_id = $processId;
         }
         release_object($collection);
-        $response = $exporter->sendToCommons();        
+        $response = $exporter->sendToCommons();   
+        //@TODO: what happens if commons is unavailable or times out?    
         //record errors related to authentication before checking collection save status
         if($response['status'] == 'error') {
             $this->status_message = $response['messages'];

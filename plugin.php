@@ -63,7 +63,7 @@ define('COMMONS_API_APPLY_URL', 'http://localhost/commons/commons-api/site/apply
 
 
 // /*
-
+set_option('commons_key', '4b0e952797dde61b868213d376d7775d740566f0');
 define('COMMONS_API_URL', 'http://test.omeka.org/omeka-commons/commons-api/import');
 define('COMMONS_API_APPLY_URL', 'http://test.omeka.org/omeka-commons/commons-api/site/apply');
 // */
