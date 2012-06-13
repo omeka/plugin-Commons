@@ -57,6 +57,8 @@ define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
 
  /*
+set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
+  
 define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
 define('COMMONS_API_APPLY_URL', 'http://localhost/commons/commons-api/site/apply');
 // */
