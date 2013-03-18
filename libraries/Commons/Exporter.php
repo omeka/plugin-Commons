@@ -44,11 +44,12 @@ abstract class Commons_Exporter
         try {
             $response = $client->request('POST');
             $responseBody = substr(stripslashes($response->getBody()), 1, -1);
-            $responseArray = json_decode($responseBody, true);            
+            
+            $responseArray = json_decode($responseBody, true);
+            debug('body ' . $responseBody);
         } catch (Exception $e) {
             $responseArray = array('status'=>'error', 'messages'=>$e);
         }
-
         return $responseArray;
     }
 
@@ -67,10 +68,11 @@ abstract class Commons_Exporter
                     'commons_title_color' =>get_option('commons_title_color')
                     );
         $template = array(
-            'key' => $key,
+            'api_key' => $key,
             'site_url' => WEB_ROOT,
             'site' => $site
         );
+        debug(print_r($template, true));
         return $template;
     }
 
