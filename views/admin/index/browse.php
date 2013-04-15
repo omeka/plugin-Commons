@@ -1,18 +1,18 @@
 <?php
 $head = array('title' => 'Omeka Commons Branding', 'content_class' => 'horizontal-nav');
-head($head);
+echo head($head);
 
 
 ?>
 <ul id="section-nav" class="navigation">
     <li class="">
-        <a href="<?php echo uri('commons/index/share'); ?>">Share via Omeka Commons</a>
+        <a href="<?php echo url('commons/index/share'); ?>">Share via Omeka Commons</a>
     </li>
     <li class="">
-        <a href="<?php echo uri('commons/index/branding'); ?>">Commons branding options</a>
+        <a href="<?php echo url('commons/index/branding'); ?>">Commons branding options</a>
     </li>
     <li class="">
-        <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
+        <a href="<?php echo url('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
     </li>
 </ul>
 
@@ -54,7 +54,7 @@ label#commons-check-label, label#commons-delete-all-label {
     <th>Collection/Site Export Info</th>
 </tr>
 <tbody>
-<?php while(loop_records('commons_records', $commonsrecords, 'commons_set_current_record')):  ?>
+<?php foreach(loop('commons_records', $commons_records) as $commonsrecord):  ?>
 <tr>
 <?php $record = commons_get_current_record(); ?>
 <td>
@@ -84,7 +84,7 @@ label#commons-check-label, label#commons-delete-all-label {
 </td>
 
 </tr>
-<?php endwhile; ?>
+<?php endforeach; ?>
 </tbody>
 </table>
 
@@ -94,4 +94,4 @@ label#commons-check-label, label#commons-delete-all-label {
 
 
 
-<?php foot();?>
+<?php echo foot();?>

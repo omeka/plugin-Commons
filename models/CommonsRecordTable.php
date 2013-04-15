@@ -2,27 +2,6 @@
 
 class CommonsRecordTable extends Omeka_Db_Table
 {
-    protected $_alias = 'crt';
-
-
-    public function init()
-    {
-        $this->_modelClass = 'CommonsRecord';
-    }
-
-    public function applySearchFilters($select, $params)
-    {
-        if(isset($params['record_id'])) {
-            $select->where('record_id = ?' , $params['record_id']);
-        }
-        if(isset($params['record_type'])) {
-            $select->where('record_type = ?' , $params['record_type']);
-        }
-        return $select;
-    }
-
-    
-        
     public function findByTypeAndId($type, $id)
     {
         $params = array('record_type'=>$type, 'record_id'=>$id);

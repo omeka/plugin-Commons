@@ -1,18 +1,18 @@
 <?php
 $head = array('title' => 'Omeka Commons Branding', 'content_class' => 'horizontal-nav');
-head($head);
+echo head($head);
 
 ?>
 <ul id="section-nav" class="navigation">
     <li class="">
-        <a href="<?php echo uri('commons/index/share'); ?>">Share via Omeka Commons</a>
+        <a href="<?php echo url('commons/index/share'); ?>">Share via Omeka Commons</a>
     </li>
 
     <li class="">
-        <a href="<?php echo uri('commons/index/branding'); ?>">Commons branding options</a>
+        <a href="<?php echo url('commons/index/branding'); ?>">Commons branding options</a>
     </li>
     <li class="">
-        <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
+        <a href="<?php echo url('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
     </li>
 </ul>
 <div id='primary'>
@@ -22,7 +22,7 @@ or send items in collections via the collection edit screen. Note that only publ
 Contextual information about items (collections and exhibit information) will also be sent if those contexts are also public.
 </p> 
 
-<p>You can also customize your display case in the Omeka Commons at <a href="<?php echo uri('commons/index/branding'); ?>">Commons branding options</a></p>
+<p>You can also customize your display case in the Omeka Commons at <a href="<?php echo url('commons/index/branding'); ?>">Commons branding options</a></p>
 
 <form enctype="multipart/form-data" action="" method="post">
 
@@ -38,10 +38,10 @@ Contextual information about items (collections and exhibit information) will al
         <label for="commons-collections[]">Export by collection</label>
         <p class="explanation">Send items to the Omeka Commons by collection. Only public items within each collection are sent.</p>
         <div class="inputs">
-            <?php while (loop_collections()): ?>
-                <input type="checkbox" name="commons-collections[]" value="<?php echo collection('id'); ?>" /><?php echo collection('name'); ?>
+            <?php foreach(loop('collection') as $collection): ?>
+                <input type="checkbox" name="commons-collections[]" value="<?php echo metadata('collection', 'id'); ?>" /><?php echo metadata('collection', array('Dublin Core', 'Title'));  ?>
                  <br />
-            <?php endwhile; ?>
+            <?php endforeach; ?>
         </div>
     </div>
     
@@ -50,4 +50,4 @@ Contextual information about items (collections and exhibit information) will al
 
 </div>
 
-<?php foot();?>
+<?php echo foot();?>

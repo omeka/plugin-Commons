@@ -1,16 +1,12 @@
 <?php
 
-class Commons_IndexController extends Omeka_Controller_Action
+class Commons_IndexController extends Omeka_Controller_AbstractActionController
 {
     protected $_browseRecordsPerPage = 10;
 
     public function init()
     {
-        if (version_compare(OMEKA_VERSION, '2.0-dev', '>=')) {
             $this->_helper->db->setDefaultModelName('CommonsRecord');
-        } else {
-            $this->_modelClass = 'CommonsRecord';
-        }
     }
     
     public function browseAction()
@@ -69,7 +65,8 @@ class Commons_IndexController extends Omeka_Controller_Action
         $client->setUri(COMMONS_API_URL);
 
         if(! is_writable(COMMONS_PLUGIN_DIR . '/commons_images')) {
-            $this->flashError('commons_images directory must be writable by the server');
+            debug( COMMONS_PLUGIN_DIR . '/commons_images' );
+            $this->_helper->flashMessenger('commons_images directory must be writable by the server', 'error');
         }
 
 
@@ -77,7 +74,7 @@ class Commons_IndexController extends Omeka_Controller_Action
             if(!empty($_FILES['commons_logo']['name'])) {
                 $filePath = COMMONS_PLUGIN_DIR . '/commons_images/' . $_FILES['commons_logo']['name'];
                 if(!move_uploaded_file($_FILES['commons_logo']['tmp_name'], $filePath)) {
-                    $this->flashError('Could not save the file to ' . $filePath);
+                    $this->_helper->flashMessenger('Could not save the file to ' . $filePath, 'error');
                     return;
                 }
                 $client->setFileUpload($filePath, 'logo');
@@ -103,7 +100,7 @@ class Commons_IndexController extends Omeka_Controller_Action
             $response = $client->request('POST');
             $responseJson = json_decode( $response->getBody() , true );
             if($responseJson['status'] == 'error') {
-                $this->flashError($responseJson['status']);
+                $this->_helper->flashMessenger($responseJson['status'], 'error');
             }
         }
     }
@@ -111,7 +108,7 @@ class Commons_IndexController extends Omeka_Controller_Action
     public function shareAction()
     {
         
-        if($_POST['commons_export_all'] == 'on') {
+        if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
             require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
             $processDispatcher = new ProcessDispatcher;
             $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));

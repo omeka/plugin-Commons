@@ -1,6 +1,6 @@
 <?php
 
-class CommonsRecord extends Omeka_Record
+class CommonsRecord extends Omeka_Record_AbstractRecord
 {
     public $id;
     public $commons_id;

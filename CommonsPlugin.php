@@ -1,12 +1,35 @@
 <?php
 
-class CommonsPlugin extends Omeka_Plugin_Abstract
+
+define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
+define('COMMONS_BASE_URL', 'http://localhost/commons');
+
+// /*
+set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
+
+define('COMMONS_API_URL', 'http://localhost/Omeka/commons-api/import');
+//define('COMMONS_API_APPLY_URL', 'http://localhost/commons/commons-api/site/apply');
+// */
+
+
+
+
+/*
+ set_option('commons_key', '4b0e952797dde61b868213d376d7775d740566f0');
+
+define('COMMONS_API_URL', 'http://test.omeka.org/omeka-commons/commons-api/import');
+define('COMMONS_API_APPLY_URL', 'http://test.omeka.org/omeka-commons/commons-api/site/apply');
+// */
+
+class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 {
     protected $_hooks = array(
-        'admin_append_to_items_show_secondary',
-        'admin_append_to_collections_show_primary',
+        'admin_items_show_sidebar',
+        'admin_items_panel_fields',
+        'admin_collections_panel_fields',
+        //'admin_collections_show_sidebar',
+        'admin_collections_show',
         'admin_theme_header',
-        'admin_append_to_collections_form',
         'after_save_form_collection',
         'after_save_form_item',
         'before_delete_item',
@@ -17,25 +40,28 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         );
 
     protected $_filters = array(
-        'admin_items_form_tabs',
         'admin_navigation_main'
         );
 
     protected $_options = array();
 
-    public function hookAdminAppendToCollectionsShowPrimary($collection)
+    public function hookAdminCollectionsShow($args)
     {
+        $collection = $args['collection'];
         $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-        $html = "<h2>Omeka Commons</h2>";
+        $html = "<h4>Omeka Commons</h4>";
         if($record) {
             $html .= "<p>Items in this collection are part of the Omeka Commons.</p>";
-            $html .= "<p>You can check the status of recently added collections on the <a href='" . uri('commons/index/browse') . "'>Omeka Commons status tab</a>.</p>";
+            $html .= "<p>You can check the status of recently added collections on the <a href='" . url('commons/index/browse') . "'>Omeka Commons status tab</a>.</p>";
+        } else {
+            $html .= "<p>Items have not been added to Omeka Commons (unless they were added individually)</p>";
         }
         echo $html;
     }
 
-    public function hookAdminAppendToItemsShowSecondary($item)
+    public function hookAdminItemsShowSidebar($args)
     {
+        $item = $args['item'];
         if(!get_option('commons_key')) {
             return;
         }
@@ -59,31 +85,22 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
             }
         }
 
-        $html = "<div class='info-panel'>";
+        $html = "<div class='info panel'>";
         $html .= "<h2>Omeka Commons</h2>";
         $html .= $link;
         $html .= "</div>";
         echo $html;
     }
 
-    public function hookAdminThemeHeader()
+    public function hookAdminThemeHeader($args)
     {
-
-        if(version_compare(OMEKA_VERSION, '1.3', '<')) {
-            $jquerySrc = WEB_PLUGIN . '/Commons/views/admin/javascripts/jquery.js';
-            $commonsJsSrc = WEB_PLUGIN . '/Commons/views/admin/javascripts/commons.js';
-            $commonsCssLink = WEB_PLUGIN . '/Commons/views/admin/css/commons.css';
-            echo "<script type='text/javascript' src='$jquerySrc'></script>";
-            echo "<script type='text/javascript' src='$commonsJsSrc'></script>";
-            echo "<link rel='stylesheet' href='$commonsCssLink'></link>";
-        } else {
-            queue_js('commons');
-            queue_css('commons');
-        }
+        queue_js_file('commons');
+        queue_css_file('commons');
     }
 
-    public function hookAdminAppendToCollectionsForm($collection)
+    public function hookAdminCollectionsPanelFields($args)
     {
+        $collection = $args['record'];
         if(!get_option('commons_key')) {
             return;
         }
@@ -91,8 +108,9 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         echo $this->commonsForm($record, 'Collection');
     }
 
-    public function hookAfterSaveFormCollection($collection)
+    public function hookAfterSaveFormCollection($args)
     {
+        $collection = $args['collection'];
         if(!get_option('commons_key')) {
             return;
         }
@@ -112,28 +130,30 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
     }
 
-    public function filterAdminNavigationMain($tabs)
+    public function filterAdminNavigationMain($navArray)
     {
-        $tabs['Omeka Commons'] = uri('commons/index/share');
-        return $tabs;
+        $navArray['Omeka Commons'] = array('label'=>__('Omeka Commons'), 'uri'=>url('commons/index/share'));
+        return $navArray;
     }
 
-    public function filterAdminItemsFormTabs($tabs, $item)
+    public function hookAdminItemsPanelFields($args)
     {
+        $item = $args['record'];
         if(!get_option('commons_key')) {
             return;
         }
 
         if($item->exists()) {
             $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+            
+            echo $this->commonsForm($record, 'Item');
         }
-
-        $tabs['Omeka Commons'] = $this->commonsForm($record, 'Item');
-        return $tabs;
     }
 
-    public function hookAfterSaveFormItem($item, $post)
+    public function hookAfterSaveFormItem($args)
     {
+        $item = $args['item'];
+        $post = $args['post'];
         $db = get_db();
         if(!get_option('commons_key')) {
             return;
@@ -145,7 +165,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
                 if($record) {
                     $record->delete();
                 }
-                throw new Omeka_Validator_Exception("Only public Items can be part of the Omeka Commons");
+                throw new Omeka_Validator_Exception(__("Only public Items can be part of the Omeka Commons"));
             }
             if(!$record) {
                 $record = new CommonsRecord();
@@ -161,8 +181,9 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         }
     }
 
-    public function hookBeforeDeleteItem($item)
+    public function hookBeforeDeleteItem($args)
     {
+        $item = $args['item'];
         $db = get_db();
         if(!get_option('commons_key')) {
             return;
@@ -211,7 +232,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
     public function hookUninstall()
     {
         $db = get_db();
-        $sql = "DROP TABLE `$db->CommonsRecord` ;";
+        $sql = "DROP TABLE IF EXISTS `$db->CommonsRecord` ;";
         $db->query($sql);
     }
 
@@ -234,7 +255,7 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
                 $text = "Add items in this collection to the Omeka Commons?";
             break;
         }
-        $html = "<fieldset>";
+        $html = "<div class='field'>";
         $html .= "<label for='in_commons'>$text</label><input type='checkbox' name='in_commons'";
 
         if($record) {
@@ -242,12 +263,9 @@ class CommonsPlugin extends Omeka_Plugin_Abstract
         } else {
             $html .= " />";
         }
-
-        $html .= "</fieldset>";
-
+        $html .= "</div>";
         return $html;
     }
-
 }
 
 
