@@ -44,7 +44,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     private function elementTexts()
     {
         $ops = array('return_type'=> 'array');
-        $elTexts = show_item_metadata($ops, $this->record);
+        $elTexts = all_element_texts($this->record, $ops);
         foreach($elTexts as $set=>$elements) {
           foreach($elements as $element=>$texts) {
             foreach($texts as $index=>$text) {
@@ -68,7 +68,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     {
         $filesArray = array();
         foreach($this->record->Files as $file) {
-            $filesArray[] = $this->buildRealUrl(file_display_uri($file, 'archive'));
+            $filesArray[] = absolute_url(file_display_url($file, 'original'));
         }
         return $filesArray;
     }
@@ -76,7 +76,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     private function tags()
     {
         $tagsArray = array();
-        $tags = get_tags(array('record'=>$this->record), null);
+        $tags = $this->record->Tags;
         foreach($tags as $tag) {
             $tagsArray[] = $tag->name;
         }

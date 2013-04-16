@@ -5,10 +5,11 @@ define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
 
 // /*
-set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
+//set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
+//delete_option('commons_key');
 
 define('COMMONS_API_URL', 'http://localhost/Omeka/commons-api/import');
-//define('COMMONS_API_APPLY_URL', 'http://localhost/commons/commons-api/site/apply');
+define('COMMONS_API_APPLY_URL', 'http://localhost/Omeka/commons-api/site/apply');
 // */
 
 
@@ -30,8 +31,8 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         //'admin_collections_show_sidebar',
         'admin_collections_show',
         'admin_theme_header',
-        'after_save_form_collection',
-        'after_save_form_item',
+        'after_save_collection',
+        'after_save_item',
         'before_delete_item',
         'config',
         'config_form',
@@ -108,7 +109,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         echo $this->commonsForm($record, 'Collection');
     }
 
-    public function hookAfterSaveFormCollection($args)
+    public function hookAfterSaveCollection($args)
     {
         $collection = $args['collection'];
         if(!get_option('commons_key')) {
@@ -150,17 +151,17 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         }
     }
 
-    public function hookAfterSaveFormItem($args)
+    public function hookAfterSaveItem($args)
     {
-        $item = $args['item'];
+        $item = $args['record'];
         $post = $args['post'];
         $db = get_db();
         if(!get_option('commons_key')) {
             return;
         }
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-        if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on' ) {
-            $db = get_db();
+        if(isset($post['in_commons']) && $post['in_commons'] == 'on' ) {
+            debug('a');
             if(!$item->public) {
                 if($record) {
                     $record->delete();
@@ -172,7 +173,9 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 $record->record_id = $item->id;
                 $record->record_type = 'Item';
             }
+            debug('before export');
             $record->export();
+            debug('after export');
             $record->save();
         } else {
             if($record) {

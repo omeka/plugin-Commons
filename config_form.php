@@ -5,7 +5,8 @@ $site = array('site'=> array(
             'description' => get_option('description'),
             'copyright_info' => get_option('copyright'),
             'author_info' => get_option('author'),
-            'url' => WEB_ROOT
+            'url' => WEB_ROOT,
+            'version' => OMEKA_VERSION
             )
         );
 $data = array('data' => $site)
@@ -15,7 +16,7 @@ $data = array('data' => $site)
 
 apply = function() {
     data = {data: <?php echo json_encode($site); ?>};
-    url = "<?php echo uri('commons/index/apply') ?>";
+    url = "<?php echo url('commons/index/apply') ?>";
     jQuery.post(url, data, function(response, status, jqXHR) {
         response = JSON.parse(response);
         //someday these should do something fancier and different based on response status
@@ -49,7 +50,7 @@ apply = function() {
 <div class='field'>
 <label for='commons_key'>API Key</label>
     <div class='inputs'>
-        <?php echo __v()->formText('commons_key', get_option('commons_key'), array('size'=>'42')); ?>
+        <?php echo get_view()->formText('commons_key', option('commons_key'), array('size'=>'42')); ?>
         <?php if(get_option('commons_key')) :?>
         <p class='explanation'>Do not change this!</p>
         <?php else: ?>
