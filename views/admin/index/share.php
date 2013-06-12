@@ -5,11 +5,14 @@ head($head);
 ?>
 <ul id="section-nav" class="navigation">
     <li class="">
+        <a href="<?php echo uri('commons/index/site'); ?>">Site information</a>
+    </li>
+    <li class="">
         <a href="<?php echo uri('commons/index/share'); ?>">Share via Omeka Commons</a>
     </li>
 
     <li class="">
-        <a href="<?php echo uri('commons/index/branding'); ?>">Commons branding options</a>
+        <a href="<?php echo uri('commons/index/settings'); ?>">Omeka Commons Settings</a>
     </li>
     <li class="">
         <a href="<?php echo uri('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>

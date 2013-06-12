@@ -63,7 +63,7 @@ class Commons_IndexController extends Omeka_Controller_Action
     }
 
 
-    public function brandingAction()
+    public function settingsAction()
     {
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
@@ -134,5 +134,25 @@ class Commons_IndexController extends Omeka_Controller_Action
         $collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
         $this->view->collections = $collections;        
     }
+    
+    public function siteAction()
+    {
+        if(isset($_POST['submit'])) {
+            $client = new Zend_Http_Client();
+            $client->setURI(COMMONS_API_APPLY_URL);      
+            $data = $_POST;      
+            if($_POST['commons_in_commons']) {
+                $data['action'] = 'update';
+            } else {
+                $data['action'] = 'apply';
+            }
+            
+            $client->setParameterPost('data', $data);
+            //$response = $client->request('POST');            
+            
+            //$message = $response->getBody();
 
+            $this->view->message = $message;
+        }
+    }
 }
