@@ -111,7 +111,8 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookAfterSaveCollection($args)
     {
-        $collection = $args['collection'];
+        debug(print_r(array_keys($args), true));
+        $collection = $args['record'];
         if(!get_option('commons_key')) {
             return;
         }

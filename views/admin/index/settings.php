@@ -19,37 +19,58 @@ echo nav($navArray);
 <div id='primary'>
 <?php echo flash(); ?>
 <form enctype="multipart/form-data" action="" method="post">
+<section class="seven columns alpha">
 
-    
     <div class='field'>
-    <label for='commons_key'>API Key</label>
-        <div class='inputs'>
-            <?php echo $this->formText('api_key', get_option('commons_key'), array('size'=>'42')); ?>
+        <div class="two columns alpha">
+            <label for='commons_key'>API Key</label>
+        </div>
+        <div class="inputs five columns omega">
             <?php if(get_option('commons_key')) :?>
-            <p class='explanation'>Do not change this!</p>
+            <p class='explanation'>Do not change this unless you have been issued a new key.</p>
             <?php else: ?>
             <p class='explanation'>You will receive instructions for obtaining your API key when your request has been approved.</p>
             <?php endif; ?>
+            <div class="input-block">
+                <?php echo $this->formText('api_key', get_option('commons_key'), array('size'=>'42')); ?>
+            </div>
+
         </div>
     </div>
 
     <div class='field'>
-    <label for='commons_logo'>Upload a logo</label>
-        <div class='inputs'>
-            <input name='commons_logo' type='file' />
+    <div class="two columns alpha">
+        <label for='commons_logo'>Upload a logo</label>
+    </div>
+        <div class="inputs five columns omega">
             <p class='explanation'>Logo image will be displayed at x by y px</p>
-            <img src="<?php echo get_option('commons_logo_url'); ?>" />
+            <div class="input-block">
+                <input name='commons_logo' type='file' />
+                <br />
+                <img style="margin: 5px" width="50" height="50" src="<?php echo get_option('commons_logo_url'); ?>" />
+            </div>
+            
         </div>
     </div>
 
     <div class='field'>
-    <label for='commons_dpla'>Consider my items for inclusion in the Digital Public Library of America</label>
-        <div class='inputs'>
-            <input name='commons_dpla' <?php echo get_option("omeka_dpla") ? "checked='checked'" : ""; ?> type='checkbox' />
+        <div class="two columns alpha">
+            <label for='commons_dpla'>Consider my items for inclusion in the Digital Public Library of America</label>
+        </div>
+        <div class="inputs five columns omega">
             <p class='explanation'>Check this box if you also want to your content to be submitted to the DPLA.</p>
+            <div class="input-block">
+                <input name='commons_dpla' <?php echo get_option("omeka_dpla") ? "checked='checked'" : ""; ?> type='checkbox' />
+            </div>
         </div>
     </div>
-     <input id="submit" class=" submit" type="submit" value="Apply to join Omeka Commons" name="submit">
+    
+</section>
+<section class="three columns omega">
+    <div class="panel">    
+        <input id="submit" class="big green button" type="submit" value="Update settings" name="submit">
+    </div>
+ </section>
 </form>
 
 </div>

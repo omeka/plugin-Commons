@@ -68,14 +68,12 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
         if(!empty($_POST)) {
             set_option('commons_key', $_POST['api_key']);
-            debug('files');
             if(!empty($_FILES['commons_logo']['name'])) {
                 $filePath = COMMONS_PLUGIN_DIR . '/commons_images/' . $_FILES['commons_logo']['name'];
                 if(!move_uploaded_file($_FILES['commons_logo']['tmp_name'], $filePath)) {
                     $this->_helper->flashMessenger('Could not save the file to ' . $filePath, 'error');
                     return;
                 }
-                debug('setting upload: ' . $filePath);
                 $client->setFileUpload($filePath, 'logo');
                 $logo_url = WEB_ROOT . '/plugins/Commons/commons_images/' . $_FILES['commons_logo']['name'];
                 set_option('commons_logo_url', $logo_url);
@@ -140,6 +138,10 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 $client->setURI(COMMONS_API_SETTINGS_URL . 'update');
             }
             $data = $_POST;
+            foreach($data as $option=>$value) {
+                set_option('commons_' . $option, $value);
+            }
+            
             //some data about the site isn't in the form, but in site options
             $data['super_email'] = get_option('administrator_email');
             $data['omeka_version'] = OMEKA_VERSION;
@@ -147,13 +149,13 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             $data['description'] = get_option('site_description');
             $data['url'] = WEB_ROOT;
             $data['copyright_info'] = get_option('copyright');
+            
             $client->setParameterPost('data', $data);
             $response = $client->request('POST');
             if($response->getStatus() != 200) {
                 $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
                 return;
             }
-            debug($response->getBody());
             $message = json_decode($response->getBody(), true);
             switch($message['status']) {
                 case 'OK':
