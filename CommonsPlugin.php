@@ -8,8 +8,8 @@ define('COMMONS_BASE_URL', 'http://localhost/commons');
 //set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
 //delete_option('commons_key');
 
-define('COMMONS_API_URL', 'http://localhost/Omeka/commons-api/import');
-define('COMMONS_API_APPLY_URL', 'http://localhost/Omeka/commons-api/site/apply');
+define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
+define('COMMONS_API_SETTINGS_URL', 'http://localhost/commons/commons-api/site/');
 // */
 
 

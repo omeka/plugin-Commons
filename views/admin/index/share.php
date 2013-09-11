@@ -4,16 +4,16 @@ echo head($head);
 
 ?>
 <ul id="section-nav" class="navigation">
-    <li class="">
-        <a href="<?php echo url('commons/index/share'); ?>">Share via Omeka Commons</a>
-    </li>
+<?php $navArray = array(
+        'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
+        'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
+        'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
+        'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
+        );
 
-    <li class="">
-        <a href="<?php echo url('commons/index/branding'); ?>">Commons branding options</a>
-    </li>
-    <li class="">
-        <a href="<?php echo url('commons/index/browse'); ?>">Status and Overview of items in Omeka Commons</a>
-    </li>
+echo nav($navArray);
+
+?>
 </ul>
 <div id='primary'>
 <?php echo flash(); ?>

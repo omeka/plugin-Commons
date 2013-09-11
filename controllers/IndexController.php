@@ -44,7 +44,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     public function applyAction()
     {
         $client = new Zend_Http_Client();
-        $client->setURI(COMMONS_API_APPLY_URL);
+        $client->setURI(COMMONS_API_SETTINGS_URL . 'apply');
         if(empty($_POST)) {
             $response = array('status' => 'ERROR', 'message' => "Couldn't connect to server. Please try again");
             $this->_helper->json($response);
@@ -58,25 +58,24 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         die();
     }
 
-
-    public function brandingAction()
+    public function settingsAction()
     {
         $client = new Zend_Http_Client();
-        $client->setUri(COMMONS_API_URL);
-
+        $client->setUri(COMMONS_API_SETTINGS_URL . 'update');
         if(! is_writable(COMMONS_PLUGIN_DIR . '/commons_images')) {
-            debug( COMMONS_PLUGIN_DIR . '/commons_images' );
             $this->_helper->flashMessenger('commons_images directory must be writable by the server', 'error');
         }
 
-
         if(!empty($_POST)) {
+            set_option('commons_key', $_POST['api_key']);
+            debug('files');
             if(!empty($_FILES['commons_logo']['name'])) {
                 $filePath = COMMONS_PLUGIN_DIR . '/commons_images/' . $_FILES['commons_logo']['name'];
                 if(!move_uploaded_file($_FILES['commons_logo']['tmp_name'], $filePath)) {
                     $this->_helper->flashMessenger('Could not save the file to ' . $filePath, 'error');
                     return;
                 }
+                debug('setting upload: ' . $filePath);
                 $client->setFileUpload($filePath, 'logo');
                 $logo_url = WEB_ROOT . '/plugins/Commons/commons_images/' . $_FILES['commons_logo']['name'];
                 set_option('commons_logo_url', $logo_url);
@@ -90,17 +89,16 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 $banner_url = WEB_ROOT . '/plugins/Commons/commons_images/' . $_FILES['commons_banner']['name'];
                 set_option('commons_banner_url', $banner_url);
             }
-            set_option('commons_title_color', $_POST['commons_title_color']);
 
             $data = Commons_Exporter::exportTemplate();
             $data['configSite'] = true;
-            $json = json_encode($data);
-
-            $client->setParameterPost('data', $json);
+            $client->setParameterPost('data', $data);
             $response = $client->request('POST');
-            $responseJson = json_decode( $response->getBody() , true );
-            if($responseJson['status'] == 'error') {
-                $this->_helper->flashMessenger($responseJson['status'], 'error');
+            $responseArray = json_decode($response->getBody(), true);
+            if($responseArray['status'] == 'ERROR') {
+                $this->_helper->flashMessenger($responseArray['message'], 'error');
+            } else {
+                $this->_helper->flashMessenger($responseArray['message'], 'success');
             }
         }
     }
@@ -132,4 +130,45 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         $this->view->collections = $collections;        
     }
 
+    public function siteAction()
+    {
+        if(isset($_POST['submit'])) {
+            $client = new Zend_Http_Client();
+            if($_POST['submit'] == 'Apply') {
+                $client->setURI(COMMONS_API_SETTINGS_URL . 'apply');
+            } else {
+                $client->setURI(COMMONS_API_SETTINGS_URL . 'update');
+            }
+            $data = $_POST;
+            //some data about the site isn't in the form, but in site options
+            $data['super_email'] = get_option('administrator_email');
+            $data['omeka_version'] = OMEKA_VERSION;
+            $data['title'] = get_option('site_title');
+            $data['description'] = get_option('site_description');
+            $data['url'] = WEB_ROOT;
+            $data['copyright_info'] = get_option('copyright');
+            $client->setParameterPost('data', $data);
+            $response = $client->request('POST');
+            if($response->getStatus() != 200) {
+                $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
+                return;
+            }
+            debug($response->getBody());
+            $message = json_decode($response->getBody(), true);
+            switch($message['status']) {
+                case 'OK':
+                    $flashStatus = 'success';
+                    break;
+    
+                case 'EXISTS':
+                    $flashStatus = 'alert';
+                    break;
+    
+                case 'ERROR':
+                    $flashStatus = 'error';
+                    break;
+            }
+            $this->_helper->flashMessenger($message['message'], $flashStatus);
+        }
+    }    
 }
