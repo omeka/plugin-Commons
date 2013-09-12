@@ -34,8 +34,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         'after_save_collection',
         'after_save_item',
         'before_delete_item',
-        'config',
-        'config_form',
         'install',
         'uninstall'
         );
