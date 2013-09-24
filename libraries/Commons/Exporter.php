@@ -44,11 +44,9 @@ abstract class Commons_Exporter
         try {
             $response = $client->request('POST');
             $responseBody = substr(stripslashes($response->getBody()), 1, -1);
-            
             $responseArray = json_decode($responseBody, true);
-            debug('body ' . $responseBody);
         } catch (Exception $e) {
-            $responseArray = array('status'=>'error', 'messages'=>$e);
+            $responseArray = array('status'=>'error', 'messages'=>$e->getMessage());
         }
         return $responseArray;
     }
@@ -72,19 +70,7 @@ abstract class Commons_Exporter
             'site_url' => WEB_ROOT,
             'site' => $site
         );
-        debug(print_r($template, true));
         return $template;
-    }
-
-    public function buildRealExhibitUrl($url, $level = -3)
-    {
-        $parts = explode('/', $url);
-
-        $parts = array_slice($parts, $level);
-
-        $omeka_uri = implode('/', $parts);
-        $url = WEB_ROOT . '/' . $omeka_uri;
-        return $this->buildRealUrl($url);
     }
 
     public function buildRealUrl($url) {

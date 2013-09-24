@@ -16,29 +16,7 @@ class Commons_Exporter_Item extends Commons_Exporter
             'files' => $this->files(),
             'tags' => $this->tags(),
         );
-        if(plugin_is_active('ExhibitBuilder')) {
-            $itemArray['exhibitPages'] = $this->exhibitPages();
-        }   
         return $itemArray;
-
-    }
-
-    private function exhibitPages()
-    {
-     //   $exhibitPageEntryTable = get_db()->getTable('ExhibitPageEntry');
-        $db = get_db();
-        $itemId = $this->record->id;
-        $select = "	SELECT DISTINCT sp.* FROM $db->ExhibitPage sp
-                    INNER JOIN $db->ExhibitPageEntry epe ON epe.page_id = sp.id
-                    WHERE epe.item_id = $itemId ";
-        $exhibitPages = $db->getTable('ExhibitPage')->fetchObjects($select);
-        $exhibitPageIds = array();
-        foreach ($exhibitPages as $record) {
-            $exporter = new Commons_Exporter_ExhibitPage($record);
-            $this->addDataToExport($exporter->recordData, 'exhibits');
-            $exhibitPageIds[] = $record->id;
-        }
-        return $exhibitPageIds;
     }
 
     private function elementTexts()

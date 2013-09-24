@@ -9,23 +9,15 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
     public $last_export;
     public $status;
     public $status_message;
-    public $process_id;
 
     protected $_related = array(
         'Record' => 'getRecord',
-        'Process' => 'getProcess'
     );
 
     public function getRecord()
     {
         return $this->getTable($this->record_type)->find($this->record_id);
     }
-
-    public function getProcess()
-    {
-        return $this->getTable('Process')->find($this->process_id);
-    }
-
 
     public function recordLabel()
     {
@@ -93,9 +85,13 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         }
 
         $response = $exporter->sendToCommons();
-
+        
+        if(!isset($response['status'])) {
+            debug(print_r($response, true));
+        }
+        
         //record errors related to authentication before checking item save status
-        if($response['status'] == 'error') {
+        if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
             $this->status = 'error';
         } else {
@@ -115,23 +111,22 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         if($withItems) {
             //$exporter->exportItems fires off a job to prevent timeouts
             //each item is exported separately
-            $processId = $exporter->exportItems();            
-            $this->process_id = $processId;
+            $exporter->exportItems();            
         }
         release_object($collection);
         $response = $exporter->sendToCommons();   
         //@TODO: what happens if commons is unavailable or times out?    
         //record errors related to authentication before checking collection save status
-        if($response['status'] == 'error') {
+        if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
             $this->status = 'error';
         } else {
             $collectionStatuses = $response['Collections'];
+            debug(print_r($response, true));
             $status = $collectionStatuses[$this->record_id];
             foreach($status as $column=>$value) {
                 $this->$column = $value;
             }
-
         }
     }
 }

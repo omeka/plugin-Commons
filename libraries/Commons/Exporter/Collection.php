@@ -8,8 +8,8 @@ class Commons_Exporter_Collection extends Commons_Exporter
     {
         $collectionArray = array(
             'orig_id' => $this->record->id,
-            'title' => $this->record->name,
-            'description' => $this->record->description,
+            'title' => metadata($this->record, array('Dublin Core', 'Title')),
+            'description' => metadata($this->record, array('Dublin Core', 'Description')),
             'url' => $this->buildRealUrl(WEB_ROOT . '/collections/show/' . $this->record->id),
         );
         return $collectionArray;
@@ -17,9 +17,7 @@ class Commons_Exporter_Collection extends Commons_Exporter
 
     public function exportItems()
     {
-        require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
-        $processDispatcher = new ProcessDispatcher;
-        $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('collectionId'=>$this->record->id, 'webRoot'=>WEB_ROOT));
-        return $process->id;        
+        require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
+        Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');  
     }
 }

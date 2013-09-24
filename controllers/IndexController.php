@@ -105,9 +105,8 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     {
         
         if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
-            require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportProcess.php';
-            $processDispatcher = new ProcessDispatcher;
-            $process = $processDispatcher->startProcess('Commons_ItemsExportProcess', current_user(), array('webRoot'=>WEB_ROOT));
+            require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
+            Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');
         } else if(!empty($_POST['commons-collections'])) {
             foreach($_POST['commons-collections'] as $collectionId) {
                 $record = $this->_helper->db->getTable('CommonsRecord')->findByTypeAndId('Collection', $collectionId);
@@ -119,7 +118,6 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 $record->export(true);
                 $record->save();                
             }
-            
         }
         
         //get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public

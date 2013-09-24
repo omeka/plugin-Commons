@@ -109,7 +109,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookAfterSaveCollection($args)
     {
-        debug(print_r(array_keys($args), true));
         $collection = $args['record'];
         if(!get_option('commons_key')) {
             return;
@@ -160,7 +159,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         }
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if(isset($post['in_commons']) && $post['in_commons'] == 'on' ) {
-            debug('a');
             if(!$item->public) {
                 if($record) {
                     $record->delete();
@@ -172,9 +170,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 $record->record_id = $item->id;
                 $record->record_type = 'Item';
             }
-            debug('before export');
             $record->export();
-            debug('after export');
             $record->save();
         } else {
             if($record) {
