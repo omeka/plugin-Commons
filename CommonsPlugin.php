@@ -1,27 +1,5 @@
 <?php
 
-
-define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
-define('COMMONS_BASE_URL', 'http://localhost/commons');
-
-// /*
-//set_option('commons_key', 'afaae64c6c9cc0ac86c4e5389495835cda643cbd');
-//delete_option('commons_key');
-
-define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
-define('COMMONS_API_SETTINGS_URL', 'http://localhost/commons/commons-api/site/');
-// */
-
-
-
-
-/*
- set_option('commons_key', '4b0e952797dde61b868213d376d7775d740566f0');
-
-define('COMMONS_API_URL', 'http://test.omeka.org/omeka-commons/commons-api/import');
-define('COMMONS_API_APPLY_URL', 'http://test.omeka.org/omeka-commons/commons-api/site/apply');
-// */
-
 class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 {
     protected $_hooks = array(
@@ -191,7 +169,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
             $record->makePrivate($item);
             $record->delete();
         }
-
     }
 
     public function hookConfig()
@@ -222,9 +199,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
               KEY `process_id` (`process_id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci ;
         ";
-
         $db->query($sql);
-
     }
 
     public function hookUninstall()

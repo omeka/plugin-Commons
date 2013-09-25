@@ -12,13 +12,11 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
         if(isset($args['collectionId'])) {
             $collectionId = $args['collectionId'];
             $select->where('collection_id = ?', $collectionId);
-            $select->where('public = ?', 1);
-        } else {
-            $select->where('public = ?', 1);
-
         }
+        $select->where('public = ?', 1);
         $items = $iTable->fetchObjects($select);
-        $commonsRecordTable = get_db()->getTable('CommonsRecord');
+        $commonsRecordTable = $db->getTable('CommonsRecord');
+        debug(count($items));
         foreach($items as $item) {
             //see if item has a CommonsRecord
             $itemRecord = $commonsRecordTable->findByTypeAndId('Item', $item->id);

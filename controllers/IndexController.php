@@ -105,6 +105,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     {
         
         if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
+            debug('export all');
             require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
             Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');
         } else if(!empty($_POST['commons-collections'])) {

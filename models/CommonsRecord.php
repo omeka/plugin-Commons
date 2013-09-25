@@ -86,10 +86,6 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
 
         $response = $exporter->sendToCommons();
         
-        if(!isset($response['status'])) {
-            debug(print_r($response, true));
-        }
-        
         //record errors related to authentication before checking item save status
         if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
@@ -122,7 +118,6 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
             $this->status = 'error';
         } else {
             $collectionStatuses = $response['Collections'];
-            debug(print_r($response, true));
             $status = $collectionStatuses[$this->record_id];
             foreach($status as $column=>$value) {
                 $this->$column = $value;
