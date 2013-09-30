@@ -16,7 +16,6 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
         $select->where('public = ?', 1);
         $items = $iTable->fetchObjects($select);
         $commonsRecordTable = $db->getTable('CommonsRecord');
-        debug(count($items));
         foreach($items as $item) {
             //see if item has a CommonsRecord
             $itemRecord = $commonsRecordTable->findByTypeAndId('Item', $item->id);

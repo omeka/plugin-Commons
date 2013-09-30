@@ -85,7 +85,10 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         }
 
         $response = $exporter->sendToCommons();
-        
+        if(!$response) {
+            debug('no response sending record to commons');
+            return;
+        }
         //record errors related to authentication before checking item save status
         if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];

@@ -94,9 +94,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     
     public function shareAction()
     {
-        
         if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
-            debug('export all');
             require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
             Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');
         } else if(!empty($_POST['commons-collections'])) {
@@ -147,6 +145,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 return;
             }
             $message = json_decode($response->getBody(), true);
+            if(!is_array($message)) {
+                debug("Indexcontroller 149 message from Commons: $message");
+            }
             switch($message['status']) {
                 case 'OK':
                     $flashStatus = 'success';
@@ -159,6 +160,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 case 'ERROR':
                     $flashStatus = 'error';
                     break;
+                    
+                default:
+                    $flashStatus = 'info';
             }
             $this->_helper->flashMessenger($message['message'], $flashStatus);
         }
