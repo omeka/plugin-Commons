@@ -94,22 +94,44 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     
     public function shareAction()
     {
-        if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
-            require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
-            Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');
-        } else if(!empty($_POST['commons-collections'])) {
-            foreach($_POST['commons-collections'] as $collectionId) {
-                $record = $this->_helper->db->getTable('CommonsRecord')->findByTypeAndId('Collection', $collectionId);
-                if(!$record) {
-                    $record = new CommonsRecord();
-                    $record->record_id = $collectionId;
-                    $record->record_type = 'Collection';
+        //first check that any export can happen yet.
+        $response = $this->checkCommonsStatus();
+        if($response['status'] == 'OK') {
+            if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
+                require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
+                Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');
+            } else if(!empty($_POST['commons-collections'])) {
+                foreach($_POST['commons-collections'] as $collectionId) {
+                    $record = $this->_helper->db->getTable('CommonsRecord')->findByTypeAndId('Collection', $collectionId);
+                    if(!$record) {
+                        $record = new CommonsRecord();
+                        $record->record_id = $collectionId;
+                        $record->record_type = 'Collection';
+                    }
+                    $record->export(true);
+                    $record->save();
+                    if($record->status == 'error') {
+                        debug("shareAction: record status error");
+                        $this->_helper->flashMessenger($record->status_message, 'error');
+                        break;
+                    }          
                 }
-                $record->export(true);
-                $record->save();                
             }
+        } else {
+            switch($response['status']) {
+                case 'EXISTS':
+                    $flashStatus = 'alert';
+                    break;
+            
+                case 'ERROR':
+                    $flashStatus = 'error';
+                    break;
+            
+                default:
+                    $flashStatus = 'info';
+            }
+            $this->_helper->flashMessenger($response['message'], $flashStatus);            
         }
-        
         //get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public
         //DATA about the collection will only go if the collection itself is public
         $collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
@@ -166,5 +188,28 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             }
             $this->_helper->flashMessenger($message['message'], $flashStatus);
         }
-    }    
+    }
+    
+    protected function checkCommonsStatus()
+    {
+        $client = new Zend_Http_Client();
+        $client->setURI(COMMONS_API_SETTINGS_URL . 'apply');
+        $data = array();
+        $data['url'] = WEB_ROOT;
+        if($key = get_option('commons_key')) {
+            $data['api_key'] = $key;
+            $client->setURI(COMMONS_API_SETTINGS_URL . 'update');
+        } else {
+            $client->setURI(COMMONS_API_SETTINGS_URL . 'apply');
+        }
+        
+        $client->setParameterPost('data', $data);
+        $response = $client->request('POST');
+        if($response->getStatus() != 200) {
+            $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
+            
+        }
+        $responseArray = json_decode($response->getBody(), true);  
+        return $responseArray; 
+    }
 }
