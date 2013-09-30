@@ -152,7 +152,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 if($record) {
                     $record->delete();
                 }
-                throw new Omeka_Validator_Exception(__("Only public Items can be part of the Omeka Commons"));
+                throw new Omeka_Validate_Exception(__("Only public Items can be part of the Omeka Commons"));
             }
             if(!$record) {
                 $record = new CommonsRecord();

@@ -53,9 +53,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         $client->setParameterPost('data', $_POST['data']);
 
         $response = $client->request('POST');
-        //$this->_helper->json($response->getBody());
-        echo $response->getBody();
-        die();
+        $this->_helper->json($response->getBody());
+        //echo $response->getBody();
+        //die();
     }
 
     public function settingsAction()

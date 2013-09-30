@@ -4,13 +4,13 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
 {
 
     public $webRoot; //WEB_ROOT constant doesn't work in a process
+    public $collectionId;
     public function perform()
     {
         $db = get_db();
         $iTable = $db->getTable('Item');
         $select = $iTable->getSelect();
-        if(isset($args['collectionId'])) {
-            $collectionId = $args['collectionId'];
+        if($collectionId = $this->getCollectionId()) {
             $select->where('collection_id = ?', $collectionId);
         }
         $select->where('public = ?', 1);
@@ -29,5 +29,15 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
             release_object($itemRecord);
             sleep(1);
         }
+    }
+    
+    public function setCollectionId($id)
+    {
+        $this->collectionId = $id;
+    }
+    
+    public function getCollectionId()
+    {
+        return $this->collectionId;
     }
 }

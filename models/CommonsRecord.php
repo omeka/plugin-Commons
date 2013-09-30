@@ -19,22 +19,9 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         return $this->getTable($this->record_type)->find($this->record_id);
     }
 
-    public function recordLabel()
+    public function getRecordLabel()
     {
-        //DC:Title if item, name if collection
-        switch($this->record_type) {
-            case 'Item':
-                $title = item('Dublin Core', 'Title', array(), $this->Record);
-                if($title) {
-                    return $title;
-                }
-            break;
-
-            case 'Collection':
-                return $this->Record->name;
-
-            break;
-        }
+        return metadata($this->Record, array('Dublin Core', 'Title'));
     }
 
     public function export($options = false)
@@ -61,6 +48,14 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
     {
         $this->record_id = $record->id;
         $this->record_type = get_class($record);
+    }
+    
+    public function getProperty($property)
+    {
+        if($property == 'label') {
+            return $this->getRecordLabel();
+        }
+        return parent::getProperty($property);
     }
 
     private function exportItem($item, $options = array())

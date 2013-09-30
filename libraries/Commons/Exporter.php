@@ -43,10 +43,15 @@ abstract class Commons_Exporter
         $client->setParameterPost('data', $json);
         try {
             $response = $client->request('POST');
-            //$responseBody = substr(stripslashes($response->getBody()), 1, -1);
-            $responseBody = $response->getBody();
-            debug("Exporter::sendToCommons() response: $responseBody");
+            $responseBody = substr(stripslashes($response->getBody()), 1, -1);
+            //$responseBody = trim($response->getBody());
+            
+            //$responseArray = json_decode(trim(stripslashes($responseBody)), true);
             $responseArray = json_decode($responseBody, true);
+            debug("Exporter::sendToCommons() response: " . print_r($responseArray, true));
+            //debug(print_r($responseArray, true));
+            //die();
+            
         } catch (Exception $e) {
             _log($e);
             $responseArray = array('status'=>'error', 'messages'=>$e->getMessage());

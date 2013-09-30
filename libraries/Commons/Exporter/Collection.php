@@ -18,6 +18,7 @@ class Commons_Exporter_Collection extends Commons_Exporter
     public function exportItems()
     {
         require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
-        Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob');  
+        Zend_Registry::get('bootstrap')->getResource('jobs')->send('Commons_ItemsExportJob', 
+                array('collectionId' => $this->record->id));  
     }
 }

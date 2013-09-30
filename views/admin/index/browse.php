@@ -57,12 +57,12 @@ label#commons-check-label, label#commons-delete-all-label {
     <tbody>
     <?php foreach(loop('commons_records', $commons_records) as $commonsrecord):  ?>
     <tr>
-    <?php $record = commons_get_current_record(); ?>
+    <?php $record = get_current_record('commons_records'); ?>
     <td>
         <input type="checkbox" class='commons-batch-select' name="commons-delete[]" value="<?php echo $record->id; ?>" />
-        <a><?php echo $record->recordLabel(); ?></a>
+        <a><?php echo metadata($record, 'label'); ?></a>
         <br/>
-        <a href="<?php echo commons_source_record_uri($record, 'edit'); ?>">Local page</a>
+        <a href="<?php echo record_url($record, 'edit'); ?>">Local page</a>
         <br/>
         <?php if($record->type == 'Item'): ?>
             <a href="<?php echo COMMONS_BASE_URL . '/items/show/' . $record->commons_id; ?>">Commons page</a>
