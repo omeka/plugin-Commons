@@ -140,19 +140,22 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookAfterSaveItem($args)
     {
-        $item = $args['record'];
-        $post = $args['post'];
-        $db = get_db();
         if(!get_option('commons_key')) {
             return;
         }
+        $item = $args['record'];
+        $post = $args['post'];
+        $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+        $db = get_db();
+
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if(isset($post['in_commons']) && $post['in_commons'] == 'on' ) {
             if(!$item->public) {
                 if($record) {
                     $record->delete();
                 }
-                throw new Omeka_Validate_Exception(__("Only public Items can be part of the Omeka Commons"));
+                $flashMessenger->addMessage(__("Only public Items can be part of the Omeka Commons"), 'warning');
+                return;
             }
             if(!$record) {
                 $record = new CommonsRecord();
@@ -160,6 +163,15 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 $record->record_type = 'Item';
             }
             $record->export();
+            switch($record->status) {
+                case 'ok':
+                    $flashMessenger->addMessage(__("Item was updated in Omeka Commons"), 'success');
+                    break;
+                    
+                default:
+                    $flashMessenger->addMessage(__("Something went wrong updating Omeka Commons"), 'error');
+            }
+            
             $record->save();
         } else {
             if($record) {
