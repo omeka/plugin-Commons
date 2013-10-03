@@ -65,7 +65,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
             $findParams = array('record_type'=>'Item', 'record_id'=>$item->id);
             $commonsRecords = $commonsRecordTable->findBy($findParams);
             if(empty($commonsRecords)) {
-                $link = "<p id='commons-item-add'>Make this item part of the Omeka Commons</p>";
+                $link = "<p id='commons-item-add'>Edit this item to make it part of the Omeka Commons</p>";
             } else {
                 $commonsRecord = $commonsRecords[0];
                 $link = "<p id='commons-item-status'>Already part of the Omeka Commons</p>";
@@ -74,7 +74,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         }
 
         $html = "<div class='info panel'>";
-        $html .= "<h2>Omeka Commons</h2>";
+        $html .= "<h4>Omeka Commons</h4>";
         $html .= $link;
         $html .= "</div>";
         echo $html;

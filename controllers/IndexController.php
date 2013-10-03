@@ -11,21 +11,6 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
     
     public function browseAction()
     {
-        if(isset($_POST['commons-delete-all']) && $_POST['commons-delete-all'] == 'on') {
-            $records = $this->_helper->db->getTable('CommonsRecord')->findAll();
-            foreach($records as $record) {
-                $record->delete();
-            }
-        }
-        
-        if(isset($_POST['commons-delete'])) {
-            $table = $this->_helper->db->getTable('CommonsRecord');
-            foreach($_POST['commons-delete'] as $id) {
-                $record = $table->find($id);
-                $record->delete();
-            }
-        }
-        
         if(!$this->_hasParam('sort_field')) {
             $this->_setParam('sort_field', 'last_export');
         }
