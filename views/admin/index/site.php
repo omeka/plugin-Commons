@@ -1,33 +1,23 @@
 <?php
 
 if(get_option('commons_key')) {
-    $title = 'Update info for the Commons';
+    $subtitle = __('Update info for the Commons');
 } else {
-    $title = 'Apply to be part of the Omeka Commons';
+    $subtitle = __('Apply to be part of the Omeka Commons');
 }
+
+$title = 'Omeka Commons';
 $head = array('title' => $title, 'content_class' => 'horizontal-nav');
 echo head($head);
 
 ?>
 <div id='primary'>
+
+<?php include('admin-nav.php'); ?>
+
 <?php echo flash(); ?>
 
-<ul id="section-nav" class="navigation">
-<?php $navArray = array(
-        'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
-        'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
-        'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
-        'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
-        );
-
-echo nav($navArray);
-
-?>
-</ul>
-
-<h1><?php echo $title; ?></h1>
-
-
+<h2><?php echo $subtitle; ?></h2>
 
 <form enctype="multipart/form-data" action="" method="post">    
 <section class="seven columns alpha">
@@ -115,7 +105,7 @@ echo nav($navArray);
             <input type='hidden' name='api_key' value='<?php echo $key; ?>' />
             <input id="submit" class="big green button" type="submit" value="Update" name="submit" />
             <?php else:?>
-            <input id="submit" class="bit green button" type="submit" value="Apply" name="submit" />
+            <input id="submit" class="big green button" type="submit" value="Apply" name="submit" />
             <?php endif; ?>
         </div>
     </section>    
