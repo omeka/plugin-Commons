@@ -1,28 +1,18 @@
 <?php
-$head = array('title' => 'Omeka Commons Sharing', 'content_class' => 'horizontal-nav');
+$head = array('title' => 'Omeka Commons', 'content_class' => 'horizontal-nav');
 echo head($head);
 
 ?>
-<ul id="section-nav" class="navigation">
-<?php $navArray = array(
-        'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
-        'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
-        'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
-        'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
-        );
-
-echo nav($navArray);
-
-?>
-</ul>
 <div id='primary'>
+
+<?php include('admin-nav.php'); ?>
+
 <?php echo flash(); ?>
+
 <p>You can start sending your public items to the Omeka Commons in bulk here. You can also send individual items via their edit screen,
 or send items in collections via the collection edit screen. Note that only public items will be sent to the Omeka Commons.
 Contextual information about items (collections and exhibit information) will also be sent if those contexts are also public.
 </p> 
-
-
 
 
 <form enctype="multipart/form-data" action="" method="post">

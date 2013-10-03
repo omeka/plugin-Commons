@@ -150,6 +150,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             if($response->getStatus() != 200) {
                 $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
                 return;
+            } else {
+                $this->_helper->flashMessenger("Your application has been submitted and is awaiting approval. ", 'success');
+                return;
             }
             $message = json_decode($response->getBody(), true);
             if(!is_array($message)) {

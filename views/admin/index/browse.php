@@ -1,23 +1,11 @@
 <?php
-$head = array('title' => 'Omeka Commons Items', 'content_class' => 'horizontal-nav');
+$head = array('title' => 'Omeka Commons', 'content_class' => 'horizontal-nav');
 echo head($head);
 
 
 ?>
-<ul id="section-nav" class="navigation">
-<?php $navArray = array(
-        'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
-        'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
-        'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
-        'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
-        );
-
-echo nav($navArray);
-
-?>
-</ul>
-
 <div id='primary'>
+<?php include('admin-nav.php'); ?>
 <?php echo flash(); ?>
 <div class="pagination"><?php echo pagination_links(); ?></div>
 <form method="post" >
@@ -95,7 +83,7 @@ label#commons-check-label, label#commons-delete-all-label {
     </table>
 </section>
 <section class="three columns omega">
-<div class="panel">
+<div id="save" class="panel">
     <input id='commons-submit' type="submit" class="big green button" name="submit" value="Submit" />
 </div>
 </section>

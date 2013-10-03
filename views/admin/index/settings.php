@@ -1,22 +1,10 @@
 <?php
-$head = array('title' => 'Omeka Commons Settings', 'content_class' => 'horizontal-nav');
+$head = array('title' => 'Omeka Commons', 'content_class' => 'horizontal-nav');
 echo head($head);
 
 ?>
-<ul id="section-nav" class="navigation">
-<?php $navArray = array(
-        'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
-        'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
-        'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
-        'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
-        );
-
-echo nav($navArray);
-
-?>  
-
-</ul>
 <div id='primary'>
+<?php include('admin-nav.php'); ?>
 <?php echo flash(); ?>
 <form enctype="multipart/form-data" action="" method="post">
 <section class="seven columns alpha">
@@ -67,7 +55,7 @@ echo nav($navArray);
     
 </section>
 <section class="three columns omega">
-    <div class="panel">    
+    <div id="save" class="panel">    
         <input id="submit" class="big green button" type="submit" value="Update settings" name="submit">
     </div>
  </section>
