@@ -38,7 +38,6 @@ label#commons-check-label, label#commons-delete-all-label {
     <tr>
     <?php $record = get_current_record('commons_records'); ?>
     <td>
-        <input type="checkbox" class='commons-batch-select' name="commons-delete[]" value="<?php echo $record->id; ?>" />
         <span class="title"><?php echo metadata($record, 'label'); ?></span>
         <ul class="action-links group">
             <li class="details-link">
