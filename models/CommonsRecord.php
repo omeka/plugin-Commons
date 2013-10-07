@@ -26,6 +26,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
 
     public function export($options = false)
     {
+        debug('CommonsRecord::export');
         $method = "export" . $this->record_type;
         $response = json_decode($this->$method($this->Record, $options), true);   
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
@@ -73,6 +74,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         } else {   
             $exporter = new Commons_Exporter_Item($item);
         }
+        debug('exportItem exporter: ' . get_class($exporter));
         $exporter->addDataToExport();
         if(isset($options['webRoot'])) {
             $exporter->exportData['site_url'] = $options['webRoot'];
@@ -84,6 +86,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
             debug('no response sending record to commons');
             return;
         }
+        debug('exportItem response: ' . print_r($response, true));
         //record errors related to authentication before checking item save status
         if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
