@@ -95,11 +95,17 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                     }
                     $record->export(true);
                     $record->save();
-                    if($record->status == 'error') {
-                        debug("shareAction: record status error");
-                        $this->_helper->flashMessenger($record->status_message, 'error');
-                        break;
-                    }          
+                    switch($record->status) {
+                        case 'OK':
+                            $flashStatus = 'ok';
+                            break;
+                        case 'ERROR':
+                            $flasStatus = 'error';
+                            break;
+                        default:
+                            $flashStatus = 'alert';
+                    }
+                    $this->_helper->flashMessenger($record->status_message, $flashStatus);
                 }
             }
         } else {
