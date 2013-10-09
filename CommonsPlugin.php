@@ -192,6 +192,8 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if($record) {
             $record->makePrivate($item);
+            $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
+            $flashMessenger->addMessage(__('The item has been made private in Omeka Commons'));
             $record->delete();
         }
     }
