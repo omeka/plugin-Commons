@@ -133,9 +133,11 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
         if($item->exists()) {
             $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
-            
-            echo $this->commonsForm($record, 'Item');
+        } else {
+            $record = new CommonsRecord();
+            $record->initFromRecord($item);
         }
+        echo $this->commonsForm($record, 'Item');
     }
 
     public function hookAfterSaveItem($args)
