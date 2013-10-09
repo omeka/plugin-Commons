@@ -46,7 +46,7 @@ class Commons_Exporter_Item extends Commons_Exporter
     {
         $filesArray = array();
         foreach($this->record->Files as $file) {
-            $filesArray[] = absolute_url(file_display_url($file, 'original'));
+            $filesArray[] = file_display_url($file, 'original');
         }
         return $filesArray;
     }
