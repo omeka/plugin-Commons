@@ -184,7 +184,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookBeforeDeleteItem($args)
     {
-        $item = $args['item'];
+        $item = $args['record'];
         $db = get_db();
         if(!get_option('commons_key')) {
             return;
