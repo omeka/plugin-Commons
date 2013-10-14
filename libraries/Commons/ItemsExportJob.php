@@ -7,6 +7,7 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
     public $collectionId;
     public function perform()
     {
+        $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
         $db = get_db();
         $iTable = $db->getTable('Item');
         $select = $iTable->getSelect();
@@ -16,6 +17,9 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
         $select->where('public = ?', 1);
         $items = $iTable->fetchObjects($select);
         $commonsRecordTable = $db->getTable('CommonsRecord');
+        $successCount = 0;
+        $count = count($items);
+        $errorItems = array();
         foreach($items as $item) {
             //see if item has a CommonsRecord
             $itemRecord = $commonsRecordTable->findByTypeAndId('Item', $item->id);
@@ -25,10 +29,17 @@ class Commons_ItemsExportJob extends Omeka_Job_AbstractJob
             }
             $itemRecord->export(array('webRoot' => $this->webRoot));
             $itemRecord->save();
+            if($itemRecord->status == 'ok') {
+                $successCount ++;
+            } else {
+                $errorItems[] = metadata($itemRecord->Record, array('Dublin Core', 'Title'));
+            }
+            
             release_object($item);
             release_object($itemRecord);
             sleep(1);
         }
+        $flashMessenger->addMessage(__('Successfully updated %s of %s items', $successCount, $count));
     }
     
     public function setCollectionId($id)

@@ -36,10 +36,12 @@ Contextual information about items (collections and exhibit information) will al
         
         <div class="inputs five columns omega">
             <p class="explanation">Send items to the Omeka Commons by collection. Only public items within each collection are sent.</p>
-            <div class="input-block">
+            
             <?php foreach(loop('collections') as $collection): ?>
-                <input type="checkbox" name="commons-collections[]" value="<?php echo metadata('collection', 'id'); ?>" /><?php echo metadata('collection', array('Dublin Core', 'Title'));  ?>
-                 <br />
+            <?php $title = metadata($collection, array('Dublin Core', 'Title')); ?>
+            <?php $title = !empty($title) ? $title : __('[Untitled]');?>
+            <div>
+                <input type="checkbox" name="commons-collections[]" value="<?php echo metadata('collection', 'id'); ?>" /><?php echo $title;  ?>
              </div>
             <?php endforeach; ?>
         </div>

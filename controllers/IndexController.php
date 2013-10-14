@@ -96,16 +96,17 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                     $record->export(true);
                     $record->save();
                     switch($record->status) {
-                        case 'OK':
-                            $flashStatus = 'ok';
+                        case 'ok':
                             break;
-                        case 'ERROR':
-                            $flasStatus = 'error';
+                        case 'error':
+                            $flashStatus = 'error';
+                            $message = __("");
+                            $this->_helper->flashMessenger($message, $flashStatus);
                             break;
                         default:
                             $flashStatus = 'alert';
+                            $this->_helper->flashMessenger($record->status_message, $flashStatus);
                     }
-                    $this->_helper->flashMessenger($record->status_message, $flashStatus);
                 }
             }
         } else {
@@ -134,9 +135,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         if(isset($_POST['submit'])) {
             $client = new Zend_Http_Client();
             if($_POST['submit'] == 'Apply') {
-                $client->setURI(COMMONS_API_SETTINGS_URL . 'apply');
+                $client->setUri(COMMONS_API_SETTINGS_URL . 'apply');
             } else {
-                $client->setURI(COMMONS_API_SETTINGS_URL . 'update');
+                $client->setUri(COMMONS_API_SETTINGS_URL . 'update');
             }
             $data = $_POST;
             foreach($data as $option=>$value) {
@@ -150,11 +151,13 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             $data['description'] = get_option('site_description');
             $data['url'] = WEB_ROOT;
             $data['copyright_info'] = get_option('copyright');
-            
             $client->setParameterPost('data', $data);
             $response = $client->request('POST');
             if($response->getStatus() != 200) {
                 $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
+                debug($response->getStatus());
+                debug($response->getMessage());
+                debug($client->getUri(true));
                 return;
             }
             

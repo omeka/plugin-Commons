@@ -3,13 +3,15 @@
 define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
 define('COMMONS_BASE_URL', 'http://localhost/commons');
 
+// /*
 define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
 define('COMMONS_API_SETTINGS_URL', 'http://localhost/commons/commons-api/site/');
+// */
 
-/*
-define('COMMONS_API_URL', 'http://test.omeka.org/omeka-commons/commons-api/import');
-define('COMMONS_API_APPLY_URL', 'http://test.omeka.org/omeka-commons/commons-api/site/apply');
-*/
+ /*
+define('COMMONS_API_URL', 'http://dev.omeka.org/omeka-commons/commons-api/import');
+define('COMMONS_API_SETTINGS_URL', 'http://dev.omeka.org/omeka-commons/commons-api/site/');
+// */
 
 class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -17,6 +19,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         'admin_items_show_sidebar',
         'admin_items_panel_fields',
         'admin_collections_panel_fields',
+        'admin_items_browse_simple_each',
         //'admin_collections_show_sidebar',
         'admin_collections_show',
         'admin_theme_header',
@@ -33,6 +36,16 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     protected $_options = array();
 
+    public function hookAdminItemsBrowseSimpleEach($args)
+    {
+        $item = $args['item'];
+        $commonsRecord = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
+        if($commonsRecord) {
+            echo "<p>Updated in Commons: " . metadata($commonsRecord, 'last_export') . "</p>";
+        }
+        
+    }
+    
     public function hookAdminCollectionsShow($args)
     {
         $collection = $args['collection'];

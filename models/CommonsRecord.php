@@ -26,7 +26,6 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
 
     public function export($options = false)
     {
-        debug('CommonsRecord::export');
         $method = "export" . $this->record_type;
         $response = json_decode($this->$method($this->Record, $options), true);   
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
@@ -96,6 +95,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
             $status = $response['items'][$this->record_id];
             foreach($status as $column=>$value) {
                 $this->$column = $value;
+                debug($column . ' ' . $value);
             }
         }
         release_object($item);
