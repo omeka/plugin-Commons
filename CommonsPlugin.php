@@ -26,6 +26,8 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         'after_save_collection',
         'after_save_item',
         'before_delete_item',
+        'items_browse_sql',
+        'admin_items_search',
         'install',
         'uninstall'
         );
@@ -43,7 +45,32 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         if($commonsRecord) {
             echo "<p>Updated in Commons: " . metadata($commonsRecord, 'last_export') . "</p>";
         }
+    }
+    
+    public function hookAdminItemsSearch($args)
+    {
+        $view = $args['view'];
         
+        $html = "<div class='field'>";
+        $html .= "<div class='two columns alpha'>";
+        $html .= "<label for='in_commons'>" . __("In Omeka Commons") . "</label>";
+        $html .= "</div>";
+        $html .= "<div class='five columns omega'>";
+        $html .= "<input type='checkbox' name='in_commons' />";
+        $html .= "</div>";
+        $html .= "</div>";
+        echo $html;
+    }
+    
+    public function hookItemsBrowseSql($args)
+    {
+        if(isset($args['params']['in_commons'])) {
+            $select = $args['select'];
+            $db = get_db();
+            $alias = $db->getTable('CommonsRecord')->getTableAlias();
+            $select->join(array($alias => $db->CommonsRecord), "items.id = $alias.record_id", array());
+            $select->where("$alias.record_type = 'Item'");
+        }
     }
     
     public function hookAdminCollectionsShow($args)
