@@ -51,17 +51,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
     {
         $view = $args['view'];
         echo $view->partial('advanced-search-partial.php');
-        /*
-        $html = "<div class='field'>";
-        $html .= "<div class='two columns alpha'>";
-        $html .= "<label for='in_commons'>" . __("In Omeka Commons") . "</label>";
-        $html .= "</div>";
-        $html .= "<div class='five columns omega'>";
-        $html .= "<input type='checkbox' name='in_commons' />";
-        $html .= "</div>";
-        $html .= "</div>";
-        echo $html;
-        */
     }
     
     public function hookItemsBrowseSql($args)
