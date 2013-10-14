@@ -50,7 +50,8 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookAdminItemsSearch($args)
     {
         $view = $args['view'];
-        
+        echo $view->partial('advanced-search-partial.php');
+        /*
         $html = "<div class='field'>";
         $html .= "<div class='two columns alpha'>";
         $html .= "<label for='in_commons'>" . __("In Omeka Commons") . "</label>";
@@ -60,6 +61,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         $html .= "</div>";
         $html .= "</div>";
         echo $html;
+        */
     }
     
     public function hookItemsBrowseSql($args)
