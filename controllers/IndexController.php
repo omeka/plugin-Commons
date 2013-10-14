@@ -148,7 +148,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             $data['super_email'] = get_option('administrator_email');
             $data['omeka_version'] = OMEKA_VERSION;
             $data['title'] = get_option('site_title');
-            $data['description'] = get_option('site_description');
+            $data['description'] = get_option('description');
             $data['url'] = WEB_ROOT;
             $data['copyright_info'] = get_option('copyright');
             $client->setParameterPost('data', $data);
