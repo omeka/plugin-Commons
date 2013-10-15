@@ -19,7 +19,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         'admin_items_show_sidebar',
         'admin_items_panel_fields',
         'admin_collections_panel_fields',
-        'admin_items_browse_simple_each',
+        'admin_items_browse_detailed_each',
         //'admin_collections_show_sidebar',
         'admin_collections_show',
         'admin_theme_header',
@@ -38,7 +38,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     protected $_options = array();
 
-    public function hookAdminItemsBrowseSimpleEach($args)
+    public function hookAdminItemsBrowseDetailedEach($args)
     {
         $item = $args['item'];
         $commonsRecord = get_db()->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
