@@ -173,7 +173,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function hookAfterSaveItem($args)
     {
-        debug('after save item');
         if(!get_option('commons_key')) {
             return;
         }
@@ -181,11 +180,9 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         $post = $args['post'];
         $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
         $db = get_db();
-
         
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if(isset($post['in_commons']) && $post['in_commons'] == 'on' ) {
-            debug('hook saving to commons');
             if(!$item->public) {
                 if($record) {
                     $record->delete();
@@ -214,7 +211,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 $record->delete();
             }
         }
-        debug('bottom of hook');
     }
 
     public function hookBeforeDeleteItem($args)
