@@ -16,6 +16,7 @@ class Commons_Exporter_Item extends Commons_Exporter
             'files' => $this->files(),
             'tags' => $this->tags(),
         );
+        debug(print_r($itemArray));
         return $itemArray;
     }
 
