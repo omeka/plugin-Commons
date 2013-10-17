@@ -120,6 +120,9 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookAdminCollectionsPanelFields($args)
     {
         $collection = $args['record'];
+        if(!$collection->exists()) {
+            return;
+        }
         if(!get_option('commons_key')) {
             return;
         }
