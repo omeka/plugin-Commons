@@ -212,15 +212,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
             }
 
-            switch($record->status) {
-                case 'ok':
-                    $flashMessenger->addMessage(__("Item was updated in Omeka Commons"), 'success');
-                    break;
-
-                default:
-                    $flashMessenger->addMessage(__("Something went wrong updating Omeka Commons"), 'error');
-            }
-
             $record->save();
         } else {
             if($record) {
