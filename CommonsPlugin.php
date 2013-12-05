@@ -46,13 +46,13 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
             echo "<p>Updated in Commons: " . metadata($commonsRecord, 'last_export') . "</p>";
         }
     }
-    
+
     public function hookAdminItemsSearch($args)
     {
         $view = $args['view'];
         echo $view->partial('advanced-search-partial.php');
     }
-    
+
     public function hookItemsBrowseSql($args)
     {
         if(isset($args['params']['in_commons'])) {
@@ -63,7 +63,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
             $select->where("$alias.record_type = 'Item'");
         }
     }
-    
+
     public function hookAdminCollectionsShow($args)
     {
         $collection = $args['collection'];
@@ -183,7 +183,7 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         $post = $args['post'];
         $flashMessenger = Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger');
         $db = get_db();
-        
+
         $record = $db->getTable('CommonsRecord')->findByTypeAndId('Item', $item->id);
         if(isset($post['in_commons']) && $post['in_commons'] == 'on' ) {
             if(!$item->public) {
@@ -199,15 +199,28 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                 $record->record_type = 'Item';
             }
             $record->export();
+
+            $recordResponse = $record->getResponse();
+
+            foreach($recordResponse as $recordType=>$info) {
+                foreach($info as $recInfo) {
+                    $message = __("%s ", $recordType);
+                    $flashStatus = $recInfo['status'];
+                    $message .= " " . $recInfo['status_message'];
+                    $flashMessenger->addMessage($message, $flashStatus);
+                }
+
+            }
+
             switch($record->status) {
                 case 'ok':
                     $flashMessenger->addMessage(__("Item was updated in Omeka Commons"), 'success');
                     break;
-                    
+
                 default:
                     $flashMessenger->addMessage(__("Something went wrong updating Omeka Commons"), 'error');
             }
-            
+
             $record->save();
         } else {
             if($record) {

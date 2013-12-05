@@ -9,6 +9,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
     public $last_export;
     public $status;
     public $status_message;
+    protected $response;
 
     protected $_related = array(
         'Record' => 'getRecord',
@@ -24,16 +25,21 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         return metadata($this->Record, array('Dublin Core', 'Title'));
     }
 
+    public function getResponse()
+    {
+        return $this->response;
+    }
+
     public function export($options = false)
     {
         $method = "export" . $this->record_type;
-        $response = json_decode($this->$method($this->Record, $options), true);   
+        $response = json_decode($this->$method($this->Record, $options), true);
         $this->last_export = Zend_Date::now()->toString('yyyy-MM-dd HH:mm:ss');
         $this->save();
     }
 
     public function makePrivate($item)
-    {        
+    {
         $data = Commons_Exporter::exportTemplate();
         $data['privatizeItem'] = $item->id;
         $json = json_encode($data);
@@ -49,7 +55,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         $this->record_id = $record->id;
         $this->record_type = get_class($record);
     }
-    
+
     public function getProperty($property)
     {
         if($property == 'label') {
@@ -70,7 +76,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
             $collectionExporter = new Commons_Exporter_Collection($item->Collection);
             $collectionExporter->addDataToExport();
             $exporter = new Commons_Exporter_Item($item, $collectionExporter->exportData);
-        } else {   
+        } else {
             $exporter = new Commons_Exporter_Item($item);
         }
         debug('exportItem exporter: ' . get_class($exporter));
@@ -85,7 +91,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
             debug('no response sending record to commons');
             return;
         }
-        debug('exportItem response: ' . print_r($response, true));
+        $this->response = $response;
         //record errors related to authentication before checking item save status
         if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
@@ -97,6 +103,8 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
                 $this->$column = $value;
                 debug($column . ' ' . $value);
             }
+            $fileStatuses = $response['files'];
+
         }
         release_object($item);
     }
@@ -108,11 +116,11 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
         if($withItems) {
             //$exporter->exportItems fires off a job to prevent timeouts
             //each item is exported separately
-            $exporter->exportItems();            
+            $exporter->exportItems();
         }
         release_object($collection);
-        $response = $exporter->sendToCommons();   
-        //@TODO: what happens if commons is unavailable or times out?    
+        $response = $exporter->sendToCommons();
+        //@TODO: what happens if commons is unavailable or times out?
         //record errors related to authentication before checking collection save status
         if(isset($response['status']) && $response['status'] == 'error') {
             $this->status_message = $response['messages'];
