@@ -1,9 +1,10 @@
 <?php 
 $navArray = array(
-  'site' => array('label' => 'Site Information', 'uri' => url('commons/index/site')),
-  'share' => array('label' => 'Share', 'uri' => url('commons/index/share')),
-  'settings' => array('label' => 'Settings', 'uri' => url('commons/index/settings')),
-  'browse' => array('label' => 'Items Overview', 'uri' => url('commons/index/browse'))
+  'site' => array('label' => __('Site Information'), 'uri' => url('commons/index/site')),
+  'share' => array('label' => __('Share'), 'uri' => url('commons/index/share')),
+  'settings' => array('label' => __('Settings'), 'uri' => url('commons/index/settings')),
+  'browse' => array('label' => __('Items Overview'), 'uri' => url('commons/index/browse')),
+  'tos' => array('label' => __("Terms of Service"), 'uri' => url('commons/index/tos'))
 );
 ?>
 

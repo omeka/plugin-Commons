@@ -19,11 +19,11 @@ echo head($head);
 
 <h2><?php echo $subtitle; ?></h2>
 
-<form enctype="multipart/form-data" action="" method="post">    
+<form enctype="multipart/form-data" action="" method="post">
 <section class="seven columns alpha">
 
     <div class='field'>
-        <div class="two columns alpha">    
+        <div class="two columns alpha">
             <label for='admin_email'>Email address</label>
         </div>
         <div class="inputs five columns omega">
@@ -33,13 +33,12 @@ echo head($head);
             </div>
         </div>
     </div>
-    
-    
+
     <div class='field'>
         <div class="two columns alpha">
             <label for='admin_name'>Name</label>
         </div>
-            
+
         <div class="inputs five columns omega">
             <p class='explanation'>Your name</p>
             <div class="input-block">
@@ -47,8 +46,7 @@ echo head($head);
             </div>
         </div>
     </div>
-    
-    
+
     <div class='field'>
         <div class="two columns alpha">
             <label for='admin_username'>Username</label>
@@ -60,8 +58,7 @@ echo head($head);
             </div>
         </div>
     </div>
-    
-    
+
     <div class='field'>
         <div class="two columns alpha">
             <label for='affiliation'>Affiliation</label>
@@ -72,8 +69,8 @@ echo head($head);
             <?php echo $this->formText('affiliation', get_option('commons_affiliation'), array('size'=>'42')); ?>
             </div>
         </div>
-    </div>        
-    
+    </div>
+
     <div class='field'>
         <div class="two columns alpha">
             <label for='content_summary'>Content summary</label>
@@ -85,8 +82,7 @@ echo head($head);
             </div>
         </div>
     </div>
-    
-    
+
     <div class='field'>
     <div class="two columns alpha">
         <label for='join_reason'>Reason for contributing</label>
@@ -98,7 +94,7 @@ echo head($head);
             </div>
         </div>
     </div>
-</section>
+    </section>
     <section class="three columns omega">
         <div id="save" class="panel">
             <?php if($key = get_option('commons_key')): ?>
@@ -107,11 +103,16 @@ echo head($head);
             <?php else:?>
             <input id="submit" class="big green button" type="submit" value="Apply" name="submit" />
             <?php endif; ?>
+            <div class="tos">
+                <label for='tos'>Terms and Conditions</label>
+                <p class='explanation'>I agree to the <a href="<?php echo url('commons/index/tos'); ?>">Terms and Conditions</a> for contributing to Omeka Commons.</p>
+                <?php echo $this->formCheckbox('tos', get_option('commons_tos'), array(), array(1,0)); ?>
+            </div>
         </div>
-    </section>    
+    </section>
 </form>
 </div>
 
-<?php 
+<?php
 echo foot();
 ?>

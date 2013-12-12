@@ -37,10 +37,13 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         }
         $client->setParameterPost('data', $_POST['data']);
 
-        $response = $client->request('POST');
+        try {
+        	$response = $client->request('POST');
+        } catch(Exception $e) {
+        	_log($e);
+        	$response = array('status' => 'ERROR', 'message' => "Couldn't connect to server. Please try again");
+        }
         $this->_helper->json($response->getBody());
-        //echo $response->getBody();
-        //die();
     }
 
     public function settingsAction()
@@ -79,9 +82,15 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
     public function shareAction()
     {
-        debug('shareAction');
+    	//get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public
+    	//DATA about the collection will only go if the collection itself is public
+    	$collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
+    	$this->view->collections = $collections;
         //first check that any export can happen yet.
         $response = $this->checkCommonsStatus();
+        if(!$response) {
+        	return;
+        }
         if($response['status'] == 'OK') {
             if(isset($_POST['commons_export_all']) && $_POST['commons_export_all'] == 'on') {
                 require_once COMMONS_PLUGIN_DIR . '/libraries/Commons/ItemsExportJob.php';
@@ -129,10 +138,6 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             }
             $this->_helper->flashMessenger($response['message'], $flashStatus);
         }
-        //get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public
-        //DATA about the collection will only go if the collection itself is public
-        $collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
-        $this->view->collections = $collections;
     }
 
     public function siteAction()
@@ -149,6 +154,10 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 set_option('commons_' . $option, $value);
             }
 
+            if($_POST['tos'] == 0) {
+            	$this->_helper->flashMessenger(__("You must agree to the Terms of Service before applying"), 'error');
+            	return;
+            }
             //some data about the site isn't in the form, but in site options
             $data['super_email'] = get_option('administrator_email');
             $data['omeka_version'] = OMEKA_VERSION;
@@ -157,7 +166,12 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             $data['url'] = WEB_ROOT;
             $data['copyright_info'] = get_option('copyright');
             $client->setParameterPost('data', $data);
-            $response = $client->request('POST');
+            try {
+            	$response = $client->request('POST');
+            } catch(Exception $e) {
+            	$this->_helper->flashMessenger("Error sending data to Omeka Commons. Please check your network connection and try again", 'error');
+            	return;
+            }
             if($response->getStatus() != 200) {
                 $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
                 debug($response->getStatus());
@@ -168,7 +182,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
             $message = json_decode($response->getBody(), true);
             if(!is_array($message)) {
-                debug("Indexcontroller 149 message from Commons: $message");
+                debug("Indexcontroller message from Commons: $message");
             }
             switch($message['status']) {
                 case 'OK':
@@ -190,6 +204,14 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         }
     }
 
+    public function tosAction()
+    {
+    	if(!empty($_POST['submit'])) {
+    		set_option('commons_tos', 1);
+    		$this->_helper->redirector->goto('site');
+    	}
+    }
+
     protected function checkCommonsStatus()
     {
         $client = new Zend_Http_Client();
@@ -204,10 +226,15 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
         }
 
         $client->setParameterPost('data', $data);
-        $response = $client->request('POST');
+        try {
+        	$response = $client->request('POST');
+        } catch(Exception $e) {
+        	_log($e);
+        	$this->_helper->flashMessenger(__("Omeka Commons is not available. Please check your network connection"), 'error');
+        	return false;
+        }
         if($response->getStatus() != 200) {
             $this->_helper->flashMessenger("Error sending data to Omeka Commons. Please try again", 'error');
-
         }
         $responseArray = json_decode($response->getBody(), true);
         return $responseArray;
