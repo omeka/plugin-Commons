@@ -136,6 +136,10 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         if(!get_option('commons_key')) {
             return;
         }
+        if(!get_option('commons_tos')) {
+            Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger')->addMessage(__("You must agree to the Terms of Service before sending Items to the Omeka Commons"), 'error');
+            return;
+        }
         $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
         if($collection->public && isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
             if(!$record) {
@@ -177,6 +181,10 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
     public function hookAfterSaveItem($args)
     {
         if(!get_option('commons_key')) {
+            return;
+        }
+        if(!get_option('commons_tos')) {
+            Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger')->addMessage(__("You must agree to the Terms of Service before sending Items to the Omeka Commons"), 'error');
             return;
         }
         $item = $args['record'];

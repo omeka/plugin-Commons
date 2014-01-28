@@ -82,6 +82,10 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
     public function shareAction()
     {
+        if(!get_option('commons_tos')) {
+            $this->_helper->flashMessenger(__("You must agree to the Terms of Service before sending Items to the Omeka Commons"), 'error');
+            return;
+        }
     	//get all the collections, and echo a note that public ITEMs will go, regardless of whether the collection is public
     	//DATA about the collection will only go if the collection itself is public
     	$collections = $this->_helper->db->getTable('Collection')->findBy(array('public'=>true));
