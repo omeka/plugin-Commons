@@ -12,7 +12,7 @@ echo head($head);
 <p>You can start sending your public items to the Omeka Commons in bulk here. You can also send individual items via their edit screen,
 or send items in collections via the collection edit screen. Note that only public items will be sent to the Omeka Commons.
 Contextual information about items (collections and exhibit information) will also be sent if those contexts are also public.
-</p> 
+</p>
 
 
 <form enctype="multipart/form-data" action="" method="post">
@@ -33,10 +33,10 @@ Contextual information about items (collections and exhibit information) will al
         <div class="two columns alpha">
             <label for="commons-collections[]">Export by collection</label>
         </div>
-        
+
         <div class="inputs five columns omega">
             <p class="explanation">Send items to the Omeka Commons by collection. Only public items within each collection are sent.</p>
-            
+
             <?php foreach(loop('collections') as $collection): ?>
             <?php $title = metadata($collection, array('Dublin Core', 'Title')); ?>
             <?php $title = !empty($title) ? $title : __('[Untitled]');?>
@@ -46,8 +46,8 @@ Contextual information about items (collections and exhibit information) will al
             <?php endforeach; ?>
         </div>
     </div>
-    
-     
+
+
      </section>
      <section class="three columns omega">
      <div id="save" class="panel">

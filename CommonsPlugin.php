@@ -280,6 +280,17 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
         $db = get_db();
         $sql = "DROP TABLE IF EXISTS `$db->CommonsRecord` ;";
         $db->query($sql);
+
+        delete_option('commons_key');
+        delete_option('commons_logo_url');
+        delete_option('commons_admin_email');
+        delete_option('commons_admin_name');
+        delete_option('commons_admin_username');
+        delete_option('commons_affiliation');
+        delete_option('commons_content_summary');
+        delete_option('commons_join_reason');
+        delete_option('commons_submit');
+        delete_option('commons_tos');
     }
 
     private function setOptions($post)
