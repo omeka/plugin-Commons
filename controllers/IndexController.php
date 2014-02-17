@@ -108,9 +108,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                     }
                     $record->export(true);
                     $record->save();
-
                     $recordResponse = $record->getResponse();
-
 
                     switch($record->status) {
                         case 'ok':
