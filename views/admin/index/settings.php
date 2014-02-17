@@ -37,25 +37,13 @@ echo head($head);
                 <br />
                 <img style="margin: 5px" width="50" height="50" src="<?php echo get_option('commons_logo_url'); ?>" />
             </div>
-            
+
         </div>
     </div>
 
-    <div class='field'>
-        <div class="two columns alpha">
-            <label for='commons_dpla'>Consider my items for inclusion in the Digital Public Library of America</label>
-        </div>
-        <div class="inputs five columns omega">
-            <p class='explanation'>Check this box if you also want to your content to be submitted to the DPLA.</p>
-            <div class="input-block">
-                <input name='commons_dpla' <?php echo get_option("omeka_dpla") ? "checked='checked'" : ""; ?> type='checkbox' />
-            </div>
-        </div>
-    </div>
-    
 </section>
 <section class="three columns omega">
-    <div id="save" class="panel">    
+    <div id="save" class="panel">
         <input id="submit" class="big green button" type="submit" value="Update settings" name="submit">
     </div>
  </section>
