@@ -1,17 +1,6 @@
 <?php
 
-define('COMMONS_PLUGIN_DIR', PLUGIN_DIR . '/Commons');
-define('COMMONS_BASE_URL', 'http://localhost/commons');
-
- /*
-define('COMMONS_API_URL', 'http://localhost/commons/commons-api/import');
-define('COMMONS_API_SETTINGS_URL', 'http://localhost/commons/commons-api/site/');
-// */
-
-// /*
-define('COMMONS_API_URL', 'http://dev.omeka.org/omeka-commons/commons-api/import');
-define('COMMONS_API_SETTINGS_URL', 'http://dev.omeka.org/omeka-commons/commons-api/site/');
-// */
+include('config.ini');
 
 class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 {
@@ -141,14 +130,18 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
             return;
         }
         $record = get_db()->getTable('CommonsRecord')->findByTypeAndId('Collection', $collection->id);
-        if($collection->public && isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
-            if(!$record) {
-                $record = new CommonsRecord();
-                $record->record_id = $collection->id;
-                $record->record_type = 'Collection';
+        if(isset($_POST['in_commons']) && $_POST['in_commons'] == 'on') {
+            if($collection->public) {
+                if(!$record) {
+                    $record = new CommonsRecord();
+                    $record->record_id = $collection->id;
+                    $record->record_type = 'Collection';
+                }
+                $record->export(true);
+                $record->save();
+            } else {
+                Zend_Controller_Action_HelperBroker::getStaticHelper('FlashMessenger')->addMessage(__("Only items in public collections can be sent to Omeka Commons"), 'error');
             }
-            $record->export(true);
-            $record->save();
         } else {
             if($record) {
                 $record->delete();
