@@ -151,7 +151,11 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
 
     public function filterAdminNavigationMain($navArray)
     {
-        $navArray['Omeka Commons'] = array('label'=>__('Omeka Commons'), 'uri'=>url('commons/index/share'));
+        if(get_option('commons_key')) {
+            $navArray['Omeka Commons'] = array('label'=>__('Omeka Commons'), 'uri'=>url('commons/index/share'));
+        } else {
+            $navArray['Omeka Commons'] = array('label'=>__('Omeka Commons'), 'uri'=>url('commons/index/site'));
+        }
         return $navArray;
     }
 
