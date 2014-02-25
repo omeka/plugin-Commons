@@ -152,7 +152,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             }
             $data = $_POST;
             foreach($data as $option=>$value) {
-                set_option('commons_' . $option, $value);
+                set_option($option, $value);
             }
 
             if($_POST['tos'] == 0) {
