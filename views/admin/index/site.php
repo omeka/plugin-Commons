@@ -153,7 +153,7 @@ echo head($head);
             <div class="tos">
                 <label for='tos'>Terms and Conditions</label>
                 <p class='explanation'>I agree to the <a href="<?php echo url('commons/index/tos'); ?>">Terms and Conditions</a> for contributing to Omeka Commons.</p>
-                <?php echo $this->formCheckbox('tos', get_option('commons_tos'), array(), array(1,0)); ?>
+                <?php echo $this->formCheckbox('commons_tos', get_option('commons_tos'), array(), array(1,0)); ?>
             </div>
         </div>
     </section>

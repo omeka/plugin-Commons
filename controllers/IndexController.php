@@ -155,13 +155,14 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
                 set_option($option, $value);
             }
 
-            if($_POST['tos'] == 0) {
+            if($_POST['commons_tos'] == 0) {
             	$this->_helper->flashMessenger(__("You must agree to the Terms of Service before applying"), 'error');
             	return;
             }
             //some data about the site isn't in the form, but in site options
             $data['omeka_version'] = OMEKA_VERSION;
             $data['url'] = WEB_ROOT;
+            $data['super_admin'] = get_option('administrator_email');
             $client->setParameterPost('data', $data);
             try {
             	$response = $client->request('POST');
