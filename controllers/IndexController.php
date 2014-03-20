@@ -160,6 +160,7 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
             	return;
             }
             //some data about the site isn't in the form, but in site options
+            $data['title'] = get_option('site_title');
             $data['omeka_version'] = OMEKA_VERSION;
             $data['url'] = WEB_ROOT;
             $data['super_admin'] = get_option('administrator_email');
