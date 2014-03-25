@@ -18,6 +18,7 @@ abstract class Commons_Exporter
 
     public function addDataToExport($recordData = null, $typeKey = null)
     {
+        debug('exporter addDataToExport');
         $data = $recordData ? $recordData : $this->recordData;
         $typeKey = $typeKey ? $typeKey : $this->typeKey;
 
@@ -36,6 +37,8 @@ abstract class Commons_Exporter
 
     public function sendToCommons()
     {
+        debug('exporter sendToCommons');
+        debug(print_r($this->exportData, true));
         $json = json_encode($this->exportData);
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_URL);
