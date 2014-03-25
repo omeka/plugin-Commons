@@ -214,7 +214,6 @@ class CommonsPlugin extends Omeka_Plugin_AbstractPlugin
                     $message .= " " . $recInfo['status_message'];
                     $flashMessenger->addMessage($message, $flashStatus);
                 }
-
             }
 
             $record->save();

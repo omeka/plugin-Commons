@@ -66,6 +66,7 @@ class CommonsRecord extends Omeka_Record_AbstractRecord
 
     private function exportItem($item, $options = array())
     {
+        debug('exportItem start');
         if(!$item->public) {
             $this->delete();
             throw new Omeka_Validator_Exception("Only public Items can be part of the Omeka Commons");
