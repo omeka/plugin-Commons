@@ -47,17 +47,7 @@ echo head($head);
         </div>
     </div>
 
-    <div class='field'>
-        <div class="two columns alpha">
-            <label for='commons_admin_username'>Username</label>
-        </div>
-        <div class="inputs five columns omega">
-            <p class='explanation'>We will try to create an account with this username. If it is taken, we will create something close, and you can change it in the Commons.</p>
-            <div class="input-block">
-            <?php echo $this->formText('commons_admin_username', get_option('commons_admin_username'), array('size'=>'20')); ?>
-            </div>
-        </div>
-    </div>
+
 
     <div class='field'>
         <div class="two columns alpha">
