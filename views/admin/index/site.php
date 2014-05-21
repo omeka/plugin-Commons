@@ -6,6 +6,7 @@ if(get_option('commons_key')) {
     $subtitle = __('Apply to be part of the Omeka Commons');
 }
 
+queue_js_file('commons');
 $title = 'Omeka Commons';
 $head = array('title' => $title, 'content_class' => 'horizontal-nav');
 echo head($head);
@@ -134,12 +135,16 @@ echo head($head);
     </section>
     <section class="three columns omega">
         <div id="save" class="panel">
+            <?php $tos = get_option('commons_tos'); ?>
             <?php if($key = get_option('commons_key')): ?>
             <input type='hidden' name='api_key' value='<?php echo $key; ?>' />
-            <input id="submit" class="big green button" type="submit" value="Update" name="submit" />
+            <input id="submit" class="big green button" type="submit" value="Update" name="submit" <?php if(! $tos) { echo "disabled='disabled'"; }; ?> />
             <?php else:?>
-            <input id="submit" class="big green button" type="submit" value="Apply" name="submit" />
+            <input id="submit" class="big green button" type="submit" value="Apply" name="submit" <?php if(! $tos) { echo "disabled='disabled'"; }; ?> />
             <?php endif; ?>
+            <?php if(! $tos): ?>
+            <p class="error">You must agree to the Terms of Service before sending data to Omeka Commons.</p>
+            <?php endif;?>
             <div class="tos">
                 <label for='tos'>Terms and Conditions</label>
                 <p class='explanation'>I agree to the <a href="<?php echo url('commons/index/tos'); ?>">Terms and Conditions</a> for contributing to Omeka Commons.</p>

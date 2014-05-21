@@ -44,7 +44,12 @@ echo head($head);
 </section>
 <section class="three columns omega">
     <div id="save" class="panel">
-        <input id="submit" class="big green button" type="submit" value="Update settings" name="submit">
+     <?php if(get_option('commons_tos')): ?>
+         <input id="submit" class="big green button" type="submit" value="Update Settings" name="submit">
+     <?php else:?>
+         <input id="submit" class="big green button" type="submit" value="Update Settings" name="submit" disabled="disabled">
+         <p class='error'>You must agree to the <a href="<?php echo url('commons/index/tos'); ?>">Terms and Conditions</a> before changing settings.</p>
+     <?php endif; ?>
     </div>
  </section>
 </form>

@@ -48,6 +48,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
     public function settingsAction()
     {
+        if(!get_option('commons_tos')) {
+            $this->_helper->flashMessenger(__("You must agree to the Terms of Service before sending Items to the Omeka Commons"), 'error');
+        }
         $client = new Zend_Http_Client();
         $client->setUri(COMMONS_API_SETTINGS_URL . 'update');
         if(! is_writable(COMMONS_PLUGIN_DIR . '/commons_images')) {
@@ -143,6 +146,9 @@ class Commons_IndexController extends Omeka_Controller_AbstractActionController
 
     public function siteAction()
     {
+        if(!get_option('commons_tos')) {
+            $this->_helper->flashMessenger(__("You must agree to the Terms of Service before sending Items to the Omeka Commons"), 'error');
+        }
         if(isset($_POST['submit'])) {
             $client = new Zend_Http_Client();
             if($_POST['submit'] == 'Apply') {
